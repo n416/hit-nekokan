@@ -1,0 +1,498 @@
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    height: 100vh;
+    background-color: #f0f0f5;
+}
+
+.header {
+    background-color: #f8f8f8;
+    border-bottom: 1px solid #dee2e6;
+    padding: 10px 0;
+    text-align: center;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 4;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.header .title {
+    font-size: 1.2em;
+    font-weight: bold;
+    flex-grow: 1;
+    text-align: center;
+}
+
+.top-right-align {
+    position: absolute;
+    right: 15px;
+    z-index: 5;
+}
+
+.container {
+    width: 100%;
+    max-width: 1200px;
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    margin-top: 90px; /* ヘッダーの高さを考慮 */
+    box-sizing: border-box;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+
+.screen {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    animation: fadeIn 0.3s forwards;
+}
+
+.main-container {
+    background-color: transparent;
+    box-shadow: none;
+    padding: 0;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeOut {
+    from { opacity: 1; transform: translateY(0); }
+    to { opacity: 0; transform: translateY(20px); }
+}
+
+.btn {
+    width: 100%;
+    padding: 15px;
+    font-size: 1.2em;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+.modal-content .btn {
+    margin-bottom: 10px;
+}
+
+.log-row {
+    display: flex;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.log-label {
+    font-size: 1.7rem;
+    padding-right: 10px;
+    color: #555;
+    width: 50px;
+    text-align: right;
+}
+
+.log-button-container {
+    flex: 1;
+}
+
+.log-btn {
+    background-color: #007bff;
+    color: white;
+    font-size: 1.2em;
+    width: 100%;
+}
+.log-container {
+    max-width: 600px;
+}
+.area-container {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    flex-wrap: wrap;
+    gap: 20px; /* タイル間のスペース */
+}
+
+.area-tile {
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 15px;
+    flex: 1;
+    min-width: 150px;
+}
+
+.area-title {
+    font-size: 1rem;
+    margin-bottom: 10px;
+    padding: 5px;
+    color: white;
+    text-align: center;
+}
+
+.terraguard .area-title {
+    background-color: #e3e3e3;
+    color: #333;
+}
+
+.turia .area-title {
+    color:palevioletred;
+    background-color: #ffd1d1;
+}
+
+.angelos .area-title {
+    color:coral;
+    background-color: #ffe4cc;
+}
+
+.fontunas .area-title {
+    color:blueviolet;
+    background-color: #f0e5ff;
+}
+.back-btn {
+    display: none;
+}
+.confirm-btn, .back-btn {
+    background-color: #666;
+    color: white;
+    border-radius: 50%;
+    padding: 10px;
+    width: 50px;
+    height: 50px;
+    text-align: center;
+    font-size: 1.5em;
+    position: relative;
+    margin: 0;
+    border: none;
+}
+
+.confirm-btn:hover::after, .back-btn:hover::after {
+    content: attr(title);
+    position: absolute;
+    bottom: 0px;
+    right: calc(100% + 5px);
+    background: #666;
+    color: white;
+    padding: 5px;
+    border-radius: 5px;
+    font-size: 0.8em;
+    white-space: nowrap;
+    opacity: 0;
+    animation: tooltipFadeIn 0.3s forwards;
+}
+
+@keyframes tooltipFadeIn {
+    from { opacity: 0; transform: translateY(5px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.log-textarea {
+    width: 100%;
+    height: 200px;
+    font-size: 1.2em;
+    margin-bottom: 20px;
+}
+
+.save-btn, .copy-btn {
+    background-color: #ccc;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.clear-btn {
+    background-color: #dc3545;
+    color: white;
+}
+
+.toast {
+    visibility: hidden;
+    min-width: 250px;
+    background-color: #555;
+    color: #fff;
+    text-align: center;
+    border-radius: 5px;
+    padding: 16px;
+    position: fixed;
+    z-index: 2;
+    left: 50%;
+    top: 80%;
+    transform: translate(-50%, -50%);
+    font-size: 1rem;
+    opacity: 0;
+    transition: opacity 0.5s ease, visibility 0.5s ease;
+    cursor: pointer;
+}
+
+.toast.show {
+    visibility: visible;
+    opacity: 1;
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 5; /* アプリケーションバーより前面に */
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    justify-content: center;
+    align-items: center;
+    animation: modalFadeInBackground 0.3s forwards;
+}
+
+.modal-content {
+    background-color: #fefefe;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    max-width: 300px;
+    text-align: center;
+    border-radius: 10px;
+    opacity: 0;
+    animation: modalContentFadeIn 0.3s forwards;
+}
+
+@keyframes modalFadeInBackground {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes modalFadeOutBackground {
+    from { opacity: 1; }
+    to { opacity: 0; }
+}
+
+@keyframes modalContentFadeIn {
+    from { opacity: 0; transform: scale(0.9); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes modalContentFadeOut {
+    from { opacity: 1; transform: scale(1); }
+    to { opacity: 0; transform: scale(0.9); }
+}
+
+.modal-close-btn {
+    position: absolute;
+    top: -15px;
+    right: -15px;
+    width: 30px;
+    height: 30px;
+    background-color: #ccc;
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-close-btn::before, .modal-close-btn::after {
+    content: '';
+    position: absolute;
+    width: 60%;
+    height: 2px;
+    background-color: #333;
+}
+
+.modal-close-btn::before {
+    transform: rotate(45deg);
+}
+
+.modal-close-btn::after {
+    transform: rotate(-45deg);
+}
+
+#modalList {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+#modalList li {
+    padding: 10px;
+    background-color: #e0e0e0;
+    margin: 5px 0;
+    border-radius: 5px;
+    cursor: pointer;
+    color: #333;
+    transition: background-color 0.3s;
+}
+
+#modalList li:hover {
+    background-color: #bbb;
+}
+
+#modalList li.active {
+    background-color: #888;
+    color: #fff;
+}
+
+.time-display {
+    font-size: 0.8rem;
+    text-wrap: nowrap;
+    color: #0000FF;
+    text-align: center;
+    margin-top: 5px;
+    margin-top: -5px;
+    border-top: 1px solid #333;
+}
+.time-input {
+    width: 100%;
+    font-size: 1.5rem;
+    padding: 10px;
+    margin: 20px 0;
+    box-sizing: border-box;
+    text-align: center;
+}
+
+#timePickerOkButton {
+    font-size: 1.5rem;
+    padding: 10px 20px;
+}
+/* アナログ時計のスタイル */
+.clock {
+    position: relative;
+    width: 150px;
+    height: 150px;
+    border: 5px solid #333;
+    border-radius: 50%;
+    margin: 0 auto 20px auto;
+    background-color: #fff;
+    rotate: 90deg;
+}
+
+.clock .hour-hand, .clock .minute-hand {
+    position: absolute;
+    width: 50%;
+    height: 2px;
+    background-color: #333;
+    top: 50%;
+    transform-origin: 100%;
+    transform: rotate(90deg);
+}
+
+.clock .minute-hand {
+    height: 1px;
+    background-color: #666;
+}
+
+.clock .center-point {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    background-color: #333;
+    border-radius: 50%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.top-left-align {
+    position: absolute;
+    left: 15px;
+    z-index: 5;
+    display: flex;
+    gap: 10px;
+}
+
+.header-btn {
+    background-color: transparent;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+.header-btn:hover {
+    transform: scale(1.1);
+}
+
+/* ノート表示用モーダルのスタイル */
+#noteModal .modal-content {
+    width: 90%;
+    max-width: 500px;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    position: relative;
+    margin: auto;
+    top: 100px;
+}
+
+#noteList {
+    margin-top: 15px;
+    font-size: 1.2rem;
+    line-height: 1.5;
+}
+
+#noteModalClose {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    cursor: pointer;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #aaa;
+}
+
+#noteModalClose:hover {
+    color: #000;
+}
+
+/* ノートカードのスタイル */
+.note-card {
+    margin-top: 20px;
+    padding: 15px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+    font-size: 1.1rem;
+    line-height: 1.5;
+    display: none; /* デフォルトでは非表示 */
+}
+
+.note-card.active {
+    display: block;
+}
+
+/* アラーム設定のスタイル */
+.alarm-settings {
+    margin-top: 20px;
+    padding: 10px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+    display: flex;
+    justify-content: space-around;
+}
+
+.alarm-settings label {
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+}
+
+.alarm-settings input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    margin-right: 10px;
+    cursor: pointer;
+}
