@@ -63,57 +63,8 @@ document.addEventListener('DOMContentLoaded', () => {
     alarm3min.disabled = isMuted;
     alarm5min.disabled = isMuted;
   });
-  function checkAndPlayAlarm() {
-    if (muteAlarm.checked) return;
-
-    const currentTime = new Date();
-
-    document.querySelectorAll('.log-label').forEach(label => {
-      const timeDisplay = label.querySelector('.time-display');
-      if (timeDisplay) {
-        const timeString = timeDisplay.textContent.trim().substring(1).padStart(5, '0'); // ⏰を除いて時刻部分のみ取得
-        const [targetHours, targetMinutes] = timeString.split(':').map(Number);
-
-        // 現在の日付でターゲットの時間を設定
-        const targetTime = new Date(currentTime);
-        targetTime.setHours(targetHours, targetMinutes, 0, 0);
-
-        const diffMilliseconds = targetTime - currentTime;
-        const diffMinutes = Math.floor(diffMilliseconds / 60000); // ミリ秒を分に変換
-
-        const areaName = label.closest('.area-tile').querySelector('.area-title').textContent.replace('（時刻順）', '');
-        const channelName = label.childNodes[0].nodeValue.trim(); // チャンネル名のみを取得
-        if (diffMinutes === 1 && alarm1min.checked) {
-          playAlarm(areaName, channelName, "1min");
-        } else if (diffMinutes === 3 && alarm3min.checked) {
-          playAlarm(areaName, channelName, "3min");
-        } else if (diffMinutes === 5 && alarm5min.checked) {
-          playAlarm(areaName, channelName, "5min");
-        }
-      }
-    });
-  }
 
   let lastPlayedArea = null;
-  let lastPlayedChannel = null;
-  let lastPlayedAlarms = {}; // 鳴らしたアラームの追跡
-  let isPlaying = false; // 現在再生中かどうかを追跡
-
-
-  function playSequentially(audioFiles) {
-    if (audioFiles.length === 0) return;
-
-    const audio = audioFiles.shift();
-    audio.play();
-
-    // 次の音声がある場合、残り0.2秒で次の音声を再生
-    if (audioFiles.length > 0) {
-      const nextAudioTime = (audio.duration - 0.85) * 1000; // ミリ秒に変換
-      setTimeout(() => {
-        playSequentially(audioFiles);
-      }, nextAudioTime);
-    }
-  }
 
   let isAlarmPlaying = false; // アラームが再生中かどうかを示すフラグ
 
@@ -159,8 +110,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 500);  // 0.5秒遅延させて再生開始
   }
 
-  setInterval(checkAndPlayAlarm, 1000);
-
   let selectedChannelLabel = null;
 
   let glassSound; // 音の再生を制御するための変数
@@ -178,25 +127,6 @@ document.addEventListener('DOMContentLoaded', () => {
   function saveTimeDisplays() {
     localStorage.setItem('timeDisplays', JSON.stringify(timeDisplays));
   }
-
-  function checkAndPlaySound() {
-    const currentTime = new Date().toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit' });
-
-    document.querySelectorAll('.log-label').forEach(label => {
-      const timeDisplay = label.querySelector('.time-display');
-      if (timeDisplay) {
-        const timeString = timeDisplay.textContent.trim().substring(1).padStart(5, '0'); // ⏰を除いて時刻部分のみ取得
-        const areaName = label.closest('.area-tile').querySelector('.area-title').textContent.replace('（時刻順）', '');
-        if (timeString === currentTime && lastPlayedArea !== areaName) {
-          glassSound.play(); // 音を再生
-          lastPlayedArea = areaName; // 再生した地域を記憶
-        }
-      }
-    });
-  }
-
-  // 毎秒チェックするためのタイマーを設定
-  setInterval(checkAndPlaySound, 1000);
 
   logButtons.forEach((button) => {
     button.textContent = '🐈';
@@ -261,6 +191,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
       // ノートカードを更新
       updateNoteCard();
+
+      checkAndPlayAlarm(); // アラームをチェック
     });
 
     button.addEventListener('mouseover', () => {
@@ -278,11 +210,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
   logTextarea.value = logs.join('\n');
-
-  // 時刻表示をローカルストレージに保存する関数
-  function saveTimeDisplays() {
-    localStorage.setItem('timeDisplays', JSON.stringify(timeDisplays));
-  }
 
   // ページロード時に保存された時刻表示を復元
   document.querySelectorAll('.log-label').forEach(label => {
@@ -432,6 +359,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // ノートカードを更新
     updateNoteCard();
+
+    checkAndPlayAlarm(); // アラームをチェック
   });
 
   confirmButton.addEventListener('click', () => {
@@ -567,6 +496,42 @@ document.addEventListener('DOMContentLoaded', () => {
       hourHand.style.transform = `rotate(${hoursDegree}deg)`;
       minuteHand.style.transform = `rotate(${minutesDegree}deg)`;
     }
+  }
+
+  function checkAndPlayAlarm() {
+    if (muteAlarm.checked) return;
+
+    const currentTime = new Date();
+
+    document.querySelectorAll('.log-label').forEach(label => {
+      const timeDisplay = label.querySelector('.time-display');
+      if (timeDisplay) {
+        const timeString = timeDisplay.textContent.trim().substring(1).padStart(5, '0'); // ⏰を除いて時刻部分のみ取得
+        const [targetHours, targetMinutes] = timeString.split(':').map(Number);
+
+        const targetTime = new Date(currentTime);
+        targetTime.setHours(targetHours, targetMinutes, 0, 0);
+
+        const diffMilliseconds = targetTime - currentTime;
+        const diffMinutes = Math.floor(diffMilliseconds / 60000); // ミリ秒を分に変換
+
+        const areaName = label.closest('.area-tile').querySelector('.area-title').textContent.replace('（時刻順）', '');
+        const channelName = label.childNodes[0].nodeValue.trim(); // チャンネル名のみを取得
+
+        if (timeString === currentTime.toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit' })) {
+          glassSound.play(); // 音を再生
+          lastPlayedArea = areaName; // 再生した地域を記憶
+        }
+
+        if (diffMinutes === 1 && alarm1min.checked) {
+          playAlarm(areaName, channelName, "1min");
+        } else if (diffMinutes === 3 && alarm3min.checked) {
+          playAlarm(areaName, channelName, "3min");
+        } else if (diffMinutes === 5 && alarm5min.checked) {
+          playAlarm(areaName, channelName, "5min");
+        }
+      }
+    });
   }
 
   timePickerModal.addEventListener('click', (e) => {
