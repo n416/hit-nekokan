@@ -76,7 +76,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const audioSequence = [
       alarmAudioFiles[timeKey],  // 1分前、3分前、5分前のアラーム
       alarmAudioFiles[areaName],  // 地域名の音声
-      alarmAudioFiles[channelName]  // チャンネル名の音声
+      alarmAudioFiles[channelName],  // チャンネル名の音声
+      alarmAudioFiles["出現"] // "出現"の音声を最後に追加
     ];
 
     const playSequentially = (audioFiles) => {
@@ -88,26 +89,14 @@ document.addEventListener('DOMContentLoaded', () => {
       const audio = audioFiles.shift();
       audio.play();
 
-      // 次の音声がある場合、残り0.2秒で次の音声を再生
-      if (audioFiles.length > 0) {
-        const nextAudioTime = (audio.duration - 0.2) * 1000; // ミリ秒に変換
-        setTimeout(() => {
-          playSequentially(audioFiles);
-        }, nextAudioTime);
-      } else {
-        audio.addEventListener('ended', () => {
-          isAlarmPlaying = false; // 最後の音声が終了したらフラグをリセット
-        });
-      }
+      // 次の音声がある場合、音声の終了を監視して次を再生
+      audio.addEventListener('ended', () => {
+        playSequentially(audioFiles);
+      });
     };
 
     // アラームの音声を順番に再生
     playSequentially(audioSequence);
-
-    // 少し遅れて「出現」音を再生（例: 0.5秒後）
-    setTimeout(() => {
-      alarmAudioFiles["出現"].play();
-    }, 500);  // 0.5秒遅延させて再生開始
   }
 
   let selectedChannelLabel = null;
