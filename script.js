@@ -34,6 +34,10 @@ document.addEventListener('DOMContentLoaded', () => {
   const alarm5min = document.getElementById('alarm5min');
   const muteAlarm = document.getElementById('muteAlarm');
 
+  let glassSound = new Audio('glass06.mp3');
+  let isAlarmPlaying = false;
+  let alarmQueue = []; // 再生待ちのアラームを管理するキュー
+
   const alarmAudioFiles = {
     "1min": new Audio('1fungo.mp3'),
     "3min": new Audio('3fungo.mp3'),
@@ -56,6 +60,132 @@ document.addEventListener('DOMContentLoaded', () => {
     audio.preload = 'auto';
   });
 
+  // フラグ管理用のオブジェクト
+  let alarmFlags = {};
+
+  function checkAndPlayAlarm() {
+    if (muteAlarm.checked) return;
+
+    const currentTime = new Date();
+    const currentHours = currentTime.getHours();
+    const currentMinutes = currentTime.getMinutes();
+    const currentSeconds = currentTime.getSeconds();
+
+    document.querySelectorAll('.log-label').forEach(label => {
+      const timeDisplay = label.querySelector('.time-display');
+      if (timeDisplay) {
+        const timeString = timeDisplay.textContent.trim().substring(1).padStart(5, '0'); // '⏰'を除外
+        const [targetHours, targetMinutes] = timeString.split(':').map(Number);
+
+        const targetTime = new Date();
+        targetTime.setHours(targetHours, targetMinutes, 0, 0);
+
+        const diffMilliseconds = targetTime - currentTime;
+        const diffMinutes = Math.floor(diffMilliseconds / 60000) + 1;
+
+        if (diffMilliseconds < -1000 || diffMilliseconds > 5 * 60 * 1000) return; // 過去や5分以上先のアラームは無視
+
+        const areaName = label.closest('.area-tile').querySelector('.area-title').textContent.replace('（時刻順）', '').trim();
+        const channelName = label.childNodes[0].nodeValue.trim();
+        const alarmKey = `${areaName}_${channelName}`;
+
+        if (!alarmFlags[alarmKey]) {
+          alarmFlags[alarmKey] = { "5min": false, "3min": false, "1min": false };
+        }
+
+        if (diffMinutes === 5 && alarm5min.checked && !alarmFlags[alarmKey]["5min"]) {
+          console.log("5分前のアラームを再生キューに追加します。");
+          alarmQueue.push({ areaName, channelName, timeKey: "5min", alarmKey, timeFlagKey: "5min" });
+          alarmFlags[alarmKey]["5min"] = true;
+        } else if (diffMinutes === 3 && alarm3min.checked && !alarmFlags[alarmKey]["3min"]) {
+          console.log("3分前のアラームを再生キューに追加します。");
+          alarmQueue.push({ areaName, channelName, timeKey: "3min", alarmKey, timeFlagKey: "3min" });
+          alarmFlags[alarmKey]["3min"] = true;
+        } else if (diffMinutes === 1 && alarm1min.checked && !alarmFlags[alarmKey]["1min"]) {
+          console.log("1分前のアラームを再生キューに追加します。");
+          alarmQueue.push({ areaName, channelName, timeKey: "1min", alarmKey, timeFlagKey: "1min" });
+          alarmFlags[alarmKey]["1min"] = true;
+        } else if (currentHours === targetHours && currentMinutes === targetMinutes && Math.abs(currentSeconds - 0) < 2) {
+          console.log("設定した時刻になりました。アラームを再生します。");
+          glassSound.play();
+          lastPlayedArea = areaName;
+        }
+      }
+    });
+
+    // キューにある次のアラームを再生
+    if (!isAlarmPlaying && alarmQueue.length > 0) {
+      const nextAlarm = alarmQueue.shift();
+      playAlarm(nextAlarm.areaName, nextAlarm.channelName, nextAlarm.timeKey, nextAlarm.alarmKey, nextAlarm.timeFlagKey);
+    }
+  }
+
+  function playAlarm(areaName, channelName, timeKey, alarmKey, timeFlagKey) {
+    if (isAlarmPlaying) {
+      console.log("既にアラームが再生中です。新しいアラームは再生しません。");
+      return;
+    }
+
+    isAlarmPlaying = true;
+    console.log(`アラームを再生開始: ${areaName} ${channelName} - ${timeKey}`);
+
+    const audioSequence = [
+      alarmAudioFiles[timeKey],
+      alarmAudioFiles[areaName],
+      alarmAudioFiles[channelName],
+      alarmAudioFiles["出現"]
+    ];
+
+    const playSequentially = (audioFiles) => {
+      if (audioFiles.length === 0) {
+        console.log("すべての音声ファイルを再生しました。");
+        console.log("alarmQueue",alarmQueue);
+        isAlarmPlaying = false;
+        alarmFlags[alarmKey][timeFlagKey] = true; // フラグをここで立てる
+
+        // キューにある次のアラームを再生
+        if (alarmQueue.length > 0) {
+          const nextAlarm = alarmQueue.shift();
+          playAlarm(nextAlarm.areaName, nextAlarm.channelName, nextAlarm.timeKey, nextAlarm.alarmKey, nextAlarm.timeFlagKey);
+        }
+        return;
+      }
+
+      const audio = audioFiles.shift();
+      console.log(`再生中の音声: ${audio.src}`);
+
+      // 再生中の音声が再生完了したら次を再生
+      audio.play();
+      audio.addEventListener('ended', () => {
+        playSequentially(audioFiles);
+      });
+
+      // エラーハンドリング: 再生に失敗した場合でも次のファイルを再生する
+      audio.addEventListener('error', () => {
+        console.log(`音声ファイルの再生に失敗しました: ${audio.src}`);
+        playSequentially(audioFiles);
+      });
+    };
+
+    // 再生シーケンスを開始
+    playSequentially([...audioSequence]); // 配列のコピーを使用して、状態を保持
+  }
+
+  // アラームの設定が変更されたときにフラグをリセットする関数
+  function resetAlarmFlags() {
+    alarmFlags = {}; // フラグをクリアする
+    console.log("アラームフラグがリセットされました");
+  }
+
+  // アラームの設定変更や新しいアラームが設定されたときに、resetAlarmFlagsを呼び出す
+  resetButton.addEventListener('click', resetAlarmFlags);
+  timePickerOkButton.addEventListener('click', resetAlarmFlags);
+
+  // ページロード時に一度だけチェックを行います。
+  checkAndPlayAlarm();
+
+  // その後、毎秒チェックを行います。
+  setInterval(checkAndPlayAlarm, 1000);
 
   muteAlarm.addEventListener('change', () => {
     const isMuted = muteAlarm.checked;
@@ -64,44 +194,7 @@ document.addEventListener('DOMContentLoaded', () => {
     alarm5min.disabled = isMuted;
   });
 
-  let lastPlayedArea = null;
-
-  let isAlarmPlaying = false; // アラームが再生中かどうかを示すフラグ
-
-  function playAlarm(areaName, channelName, timeKey) {
-    if (isAlarmPlaying) return; // すでに再生中なら、新しいアラームを再生しない
-
-    isAlarmPlaying = true; // アラーム再生を開始
-
-    const audioSequence = [
-      alarmAudioFiles[timeKey],  // 1分前、3分前、5分前のアラーム
-      alarmAudioFiles[areaName],  // 地域名の音声
-      alarmAudioFiles[channelName],  // チャンネル名の音声
-      alarmAudioFiles["出現"] // "出現"の音声を最後に追加
-    ];
-
-    const playSequentially = (audioFiles) => {
-      if (audioFiles.length === 0) {
-        isAlarmPlaying = false; // すべての音声が再生し終わったらフラグをリセット
-        return;
-      }
-
-      const audio = audioFiles.shift();
-      audio.play();
-
-      // 次の音声がある場合、音声の終了を監視して次を再生
-      audio.addEventListener('ended', () => {
-        playSequentially(audioFiles);
-      });
-    };
-
-    // アラームの音声を順番に再生
-    playSequentially(audioSequence);
-  }
-
   let selectedChannelLabel = null;
-
-  let glassSound; // 音の再生を制御するための変数
 
   // 最初のユーザー操作後に音を準備する
   document.addEventListener('click', () => {
@@ -487,45 +580,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  function checkAndPlayAlarm() {
-    if (muteAlarm.checked) return;
-
-    const currentTime = new Date();
-
-    document.querySelectorAll('.log-label').forEach(label => {
-      const timeDisplay = label.querySelector('.time-display');
-      if (timeDisplay) {
-        const timeString = timeDisplay.textContent.trim().substring(1).padStart(5, '0'); // ⏰を除いて時刻部分のみ取得
-        const [targetHours, targetMinutes] = timeString.split(':').map(Number);
-
-        const targetTime = new Date(currentTime);
-        targetTime.setHours(targetHours, targetMinutes, 0, 0);
-
-        const diffMilliseconds = targetTime - currentTime;
-        const diffMinutes = Math.floor(diffMilliseconds / 60000); // ミリ秒を分に変換
-
-        const areaName = label.closest('.area-tile').querySelector('.area-title').textContent.replace('（時刻順）', '');
-        const channelName = label.childNodes[0].nodeValue.trim(); // チャンネル名のみを取得
-
-        if (timeString === currentTime.toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit' })) {
-          glassSound.play(); // 音を再生
-          lastPlayedArea = areaName; // 再生した地域を記憶
-        }
-
-        if (diffMinutes === 1 && alarm1min.checked) {
-          playAlarm(areaName, channelName, "1min");
-        } else if (diffMinutes === 3 && alarm3min.checked) {
-          playAlarm(areaName, channelName, "3min");
-        } else if (diffMinutes === 5 && alarm5min.checked) {
-          playAlarm(areaName, channelName, "5min");
-        }
-      }
-    });
-  }
-
   timePickerModal.addEventListener('click', (e) => {
     if (e.target === timePickerModal) {
       timePickerModal.style.display = 'none';
     }
   });
 });
+
