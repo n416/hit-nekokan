@@ -5,7 +5,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link href="style.css" rel="stylesheet">
-  <script src="script.js" defer></script>
   <title>NEKO-KAN</title>
 </head>
 
@@ -31,33 +30,27 @@
         <div class="area-title">テラガード</div>
         <div class="log-row">
           <div class="log-label">PVP</div>
-          <div class="log-button-container"><button id="logButtonTerraguardPVP" class="btn log-btn">⚔️🐈⚔️</button>
-          </div>
+          <div class="log-button-container"><button id="logButtonTerraguardPVP" class="btn log-btn">⚔️🐈⚔️</button></div>
         </div>
         <div class="log-row">
           <div class="log-label">ch1</div>
-          <div class="log-button-container"><button id="logButtonTerraguardCh1" class="btn log-btn">⚔️🐈⚔️</button>
-          </div>
+          <div class="log-button-container"><button id="logButtonTerraguardCh1" class="btn log-btn">⚔️🐈⚔️</button></div>
         </div>
         <div class="log-row">
           <div class="log-label">ch2</div>
-          <div class="log-button-container"><button id="logButtonTerraguardCh2" class="btn log-btn">⚔️🐈⚔️</button>
-          </div>
+          <div class="log-button-container"><button id="logButtonTerraguardCh2" class="btn log-btn">⚔️🐈⚔️</button></div>
         </div>
         <div class="log-row">
           <div class="log-label">ch3</div>
-          <div class="log-button-container"><button id="logButtonTerraguardCh3" class="btn log-btn">⚔️🐈⚔️</button>
-          </div>
+          <div class="log-button-container"><button id="logButtonTerraguardCh3" class="btn log-btn">⚔️🐈⚔️</button></div>
         </div>
         <div class="log-row">
           <div class="log-label">ch4</div>
-          <div class="log-button-container"><button id="logButtonTerraguardCh4" class="btn log-btn">⚔️🐈⚔️</button>
-          </div>
+          <div class="log-button-container"><button id="logButtonTerraguardCh4" class="btn log-btn">⚔️🐈⚔️</button></div>
         </div>
         <div class="log-row">
           <div class="log-label">ch5</div>
-          <div class="log-button-container"><button id="logButtonTerraguardCh5" class="btn log-btn">⚔️🐈⚔️</button>
-          </div>
+          <div class="log-button-container"><button id="logButtonTerraguardCh5" class="btn log-btn">⚔️🐈⚔️</button></div>
         </div>
       </div>
 
@@ -149,8 +142,8 @@
       </div>
 
       <!-- ノート -->
-      <div id="noteCard" class="area-tile">
-      </div>
+      <div id="noteCard" class="area-tile"></div>
+
       <!-- ノートカードの下にアラーム設定を追加 -->
       <div id="alarmSettings" class="alarm-settings">
         <label><input type="checkbox" id="alarm1min"> 1分前</label>
@@ -158,8 +151,6 @@
         <label><input type="checkbox" id="alarm5min"> 5分前</label>
         <label><input type="checkbox" id="muteAlarm"> 鳴らさない</label>
       </div>
-
-
     </div>
   </div>
 
@@ -191,6 +182,7 @@
       <button id="confirmNoButton" class="btn">いいえ</button>
     </div>
   </div>
+
   <!-- 時刻入力モーダル -->
   <div id="timePickerModal" class="modal">
     <div class="modal-content">
@@ -203,5 +195,8 @@
       <button id="timePickerOkButton" class="btn">OK</button>
     </div>
   </div>
+
+  <script src="main.js" type="module"></script>
+</body>
 
 </html>
