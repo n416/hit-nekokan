@@ -363,35 +363,55 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function updateNoteCard() {
     const noteEntries = [];
-    let lastArea = null;
-
-    // ページ上に存在するすべての time-display 要素を取得して処理
+  
     document.querySelectorAll('.log-label').forEach(label => {
       const timeDisplay = label.querySelector('.time-display');
       if (timeDisplay) {
-        const timeString = timeDisplays[`${label.closest('.area-tile').querySelector('.area-title').textContent.replace('（時刻順）', '')}_${label.childNodes[0].nodeValue.trim()}`];
+        const internalTimeString = timeDisplays[`${label.closest('.area-tile').querySelector('.area-title').textContent.replace('（時刻順）', '')}_${label.childNodes[0].nodeValue.trim()}`];
         const channelName = label.childNodes[0].nodeValue.trim();
         const areaName = label.closest('.area-tile').querySelector('.area-title').textContent.replace('（時刻順）', '');
-
-        if (lastArea && lastArea === areaName) {
-          noteEntries.push(`${timeString.substring(0, 5)} ${channelName}`);
-        } else {
-          noteEntries.push(`${timeString.substring(0, 5)} ${areaName} ${channelName}`);
-          lastArea = areaName;
-        }
+  
+        const displayTime = internalTimeString.substring(0, 5);
+  
+        noteEntries.push({ time: internalTimeString, area: areaName, text: `${areaName} ${displayTime} ${channelName}` });
       }
     });
-
-    // ノートカードの内容を更新
-    if (noteEntries.length > 0) {
-      noteCard.innerHTML = noteEntries.join(' → ');
+  
+    // 秒単位でソート
+    noteEntries.sort((a, b) => a.time.localeCompare(b.time));
+  
+    // ソート後に地域が変わったタイミングで区切り線を挿入し、連続した地域名を省略
+    let lastArea = null;
+    const formattedEntries = [];
+    noteEntries.forEach((entry, index) => {
+      if (lastArea !== null && lastArea !== entry.area) {
+        formattedEntries.push('<hr>');
+        formattedEntries.push(entry.text);  // 新しい地域の場合は地域名を表示
+      } else if (lastArea !== null && lastArea === entry.area) {
+        // 同じ地域が続く場合は地域名を省略
+        const shortenedText = entry.text.replace(`${entry.area} `, '');
+        formattedEntries.push(shortenedText);
+      } else {
+        formattedEntries.push(entry.text);  // 最初のエントリの場合は地域名を表示
+      }
+      lastArea = entry.area;
+    });
+  
+    // 最後の区切り線を除去する
+    if (formattedEntries.length > 0 && formattedEntries[formattedEntries.length - 1] === '<hr>') {
+      formattedEntries.pop();
+    }
+  
+    // ソートされた結果を noteCard に反映
+    if (formattedEntries.length > 0) {
+      noteCard.innerHTML = formattedEntries.join(' → ').replace(/ → <hr>/g, '<hr>').replace(/<hr> → /g, '<hr>');
       noteCard.classList.add('active');
     } else {
       noteCard.innerHTML = '';
       noteCard.classList.remove('active');
     }
   }
-
+  
   // ページロード時にノートカードを更新
   updateNoteCard();
 
