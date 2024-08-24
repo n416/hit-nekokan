@@ -67,13 +67,25 @@ body {
 }
 
 @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 @keyframes fadeOut {
-    from { opacity: 1; transform: translateY(0); }
-    to { opacity: 0; transform: translateY(20px); }
+    from {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    to {
+        opacity: 0;
+        transform: translateY(20px);
+    }
 }
 
 .btn {
@@ -149,23 +161,24 @@ body {
 }
 
 .turia .area-title {
-    color:palevioletred;
+    color: palevioletred;
     background-color: #ffd1d1;
 }
 
 .angelos .area-title {
-    color:coral;
+    color: coral;
     background-color: #ffe4cc;
 }
 
 .fontunas .area-title {
-    color:blueviolet;
+    color: blueviolet;
     background-color: #f0e5ff;
 }
 .back-btn {
     display: none;
 }
-.confirm-btn, .back-btn {
+.confirm-btn,
+.back-btn {
     background-color: #666;
     color: white;
     border-radius: 50%;
@@ -179,7 +192,8 @@ body {
     border: none;
 }
 
-.confirm-btn:hover::after, .back-btn:hover::after {
+.confirm-btn:hover::after,
+.back-btn:hover::after {
     content: attr(title);
     position: absolute;
     bottom: 0px;
@@ -195,8 +209,14 @@ body {
 }
 
 @keyframes tooltipFadeIn {
-    from { opacity: 0; transform: translateY(5px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+        opacity: 0;
+        transform: translateY(5px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .log-textarea {
@@ -206,7 +226,8 @@ body {
     margin-bottom: 20px;
 }
 
-.save-btn, .copy-btn {
+.save-btn,
+.copy-btn {
     background-color: #ccc;
     color: #333;
     margin-bottom: 10px;
@@ -232,7 +253,9 @@ body {
     transform: translate(-50%, -50%);
     font-size: 1rem;
     opacity: 0;
-    transition: opacity 0.5s ease, visibility 0.5s ease;
+    transition:
+        opacity 0.5s ease,
+        visibility 0.5s ease;
     cursor: pointer;
 }
 
@@ -268,23 +291,43 @@ body {
 }
 
 @keyframes modalFadeInBackground {
-    from { opacity: 0; }
-    to { opacity: 1; }
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
 }
 
 @keyframes modalFadeOutBackground {
-    from { opacity: 1; }
-    to { opacity: 0; }
+    from {
+        opacity: 1;
+    }
+    to {
+        opacity: 0;
+    }
 }
 
 @keyframes modalContentFadeIn {
-    from { opacity: 0; transform: scale(0.9); }
-    to { opacity: 1; transform: scale(1); }
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
 }
 
 @keyframes modalContentFadeOut {
-    from { opacity: 1; transform: scale(1); }
-    to { opacity: 0; transform: scale(0.9); }
+    from {
+        opacity: 1;
+        transform: scale(1);
+    }
+    to {
+        opacity: 0;
+        transform: scale(0.9);
+    }
 }
 
 .modal-close-btn {
@@ -302,8 +345,9 @@ body {
     justify-content: center;
 }
 
-.modal-close-btn::before, .modal-close-btn::after {
-    content: '';
+.modal-close-btn::before,
+.modal-close-btn::after {
+    content: "";
     position: absolute;
     width: 60%;
     height: 2px;
@@ -346,7 +390,7 @@ body {
 .time-display {
     font-size: 0.8rem;
     text-wrap: nowrap;
-    color: #0000FF;
+    color: #0000ff;
     text-align: center;
     margin-top: 5px;
     margin-top: -5px;
@@ -377,7 +421,8 @@ body {
     rotate: 90deg;
 }
 
-.clock .hour-hand, .clock .minute-hand {
+.clock .hour-hand,
+.clock .minute-hand {
     position: absolute;
     width: 50%;
     height: 2px;
@@ -496,3 +541,16 @@ body {
     margin-right: 10px;
     cursor: pointer;
 }
+
+.past-log {
+    color: gray;
+  }
+  
+  .soon-log {
+    color: blue;
+  }
+  
+  .closest-log {
+    font-weight: bold;
+  }
+  
