@@ -1,0 +1,23 @@
+{
+  "name": "hit-nekokan",
+  "version": "1.0.0",
+  "description": "",
+  "main": "script.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/n416/hit-nekokan.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/n416/hit-nekokan/issues"
+  },
+  "homepage": "https://github.com/n416/hit-nekokan#readme",
+  "devDependencies": {
+    "jest": "^29.7.0"
+  }
+}
