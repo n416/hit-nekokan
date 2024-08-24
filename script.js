@@ -63,6 +63,33 @@ document.addEventListener('DOMContentLoaded', () => {
   // フラグ管理用のオブジェクト
   let alarmFlags = {};
 
+  // アラームの設定が変更されたときにフラグをリセットする関数
+  function resetAlarmFlags() {
+    alarmFlags = {}; // フラグをクリアする
+    console.log("アラームフラグがリセットされました");
+  }
+
+  // 音声キューのリセットと再生停止を行う関数
+  function resetAudioQueue() {
+    alarmQueue = []; // キューをクリア
+    if (isAlarmPlaying) {
+      Object.values(alarmAudioFiles).forEach(audio => {
+        audio.pause();
+        audio.currentTime = 0;
+      });
+      glassSound.pause();
+      glassSound.currentTime = 0;
+      isAlarmPlaying = false;
+    }
+    console.log("音声キューと再生中の音声をリセットしました。");
+  }
+
+  // 時刻表示をローカルストレージに保存する関数
+  function saveTimeDisplays() {
+    localStorage.setItem('timeDisplays', JSON.stringify(timeDisplays));
+  }
+
+  // checkAndPlayAlarm関数の位置
   function checkAndPlayAlarm() {
     if (muteAlarm.checked) return;
 
@@ -108,7 +135,6 @@ document.addEventListener('DOMContentLoaded', () => {
         } else if (currentHours === targetHours && currentMinutes === targetMinutes && Math.abs(currentSeconds - 0) < 2) {
           console.log("設定した時刻になりました。アラームを再生します。");
           glassSound.play();
-          lastPlayedArea = areaName;
         }
       }
     });
@@ -139,7 +165,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const playSequentially = (audioFiles) => {
       if (audioFiles.length === 0) {
         console.log("すべての音声ファイルを再生しました。");
-        console.log("alarmQueue",alarmQueue);
         isAlarmPlaying = false;
         alarmFlags[alarmKey][timeFlagKey] = true; // フラグをここで立てる
 
@@ -171,44 +196,15 @@ document.addEventListener('DOMContentLoaded', () => {
     playSequentially([...audioSequence]); // 配列のコピーを使用して、状態を保持
   }
 
-  // アラームの設定が変更されたときにフラグをリセットする関数
-  function resetAlarmFlags() {
-    alarmFlags = {}; // フラグをクリアする
-    console.log("アラームフラグがリセットされました");
-  }
-
-  // アラームの設定変更や新しいアラームが設定されたときに、resetAlarmFlagsを呼び出す
-  resetButton.addEventListener('click', resetAlarmFlags);
-  timePickerOkButton.addEventListener('click', resetAlarmFlags);
-
-  // ページロード時に一度だけチェックを行います。
-  checkAndPlayAlarm();
-
-  // その後、毎秒チェックを行います。
-  setInterval(checkAndPlayAlarm, 1000);
-
+  // 各種イベントに音声キューリセットを追加
   muteAlarm.addEventListener('change', () => {
+    resetAudioQueue();
     const isMuted = muteAlarm.checked;
     alarm1min.disabled = isMuted;
     alarm3min.disabled = isMuted;
     alarm5min.disabled = isMuted;
+    saveTimeDisplays(); // 設定を保存
   });
-
-  let selectedChannelLabel = null;
-
-  // 最初のユーザー操作後に音を準備する
-  document.addEventListener('click', () => {
-    if (!glassSound) {
-      glassSound = new Audio('glass06.mp3');
-    }
-  }, { once: true });
-
-  logTextarea.value = logs.join('\n');
-
-  // 時刻表示をローカルストレージに保存する関数
-  function saveTimeDisplays() {
-    localStorage.setItem('timeDisplays', JSON.stringify(timeDisplays));
-  }
 
   logButtons.forEach((button) => {
     button.textContent = '🐈';
@@ -290,6 +286,19 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
+  let selectedChannelLabel = null;
+
+  // ページロード時に一度だけチェックを行います。
+  checkAndPlayAlarm();
+
+  // その後、毎秒チェックを行います。
+  setInterval(checkAndPlayAlarm, 1000);
+
+  document.addEventListener('click', () => {
+    if (!glassSound) {
+      glassSound = new Audio('glass06.mp3');
+    }
+  }, { once: true });
 
   logTextarea.value = logs.join('\n');
 
@@ -315,8 +324,11 @@ document.addEventListener('DOMContentLoaded', () => {
     if (confirm('すべてのデータをリセットしますか？')) {
       localStorage.clear();
       location.reload();
+      // アラームの設定変更や新しいアラームが設定されたときに、resetAlarmFlagsを呼び出す
+      resetAlarmFlags
     }
   });
+
   undoButton.addEventListener('click', () => {
     if (actionHistory.length > 0) {
       const previousState = actionHistory.pop();
@@ -386,6 +398,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
   timePickerOkButton.addEventListener('click', () => {
     if (!selectedChannelLabel) return;
+    // アラームの設定変更や新しいアラームが設定されたときに、resetAlarmFlagsを呼び出す
+    resetAlarmFlags
 
     // 操作履歴を保存
     actionHistory.push({
@@ -586,4 +600,3 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 });
-
