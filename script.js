@@ -4,7 +4,6 @@ document.addEventListener('DOMContentLoaded', () => {
   let actionHistory = [];
 
   const logButtons = document.querySelectorAll('.log-btn');
-  const areaTitles = document.querySelectorAll('.area-title');
   const confirmButton = document.getElementById('confirmButton');
   const saveButton = document.getElementById('saveButton');
   const copyButton = document.getElementById('copyButton');
@@ -34,25 +33,25 @@ document.addEventListener('DOMContentLoaded', () => {
   const alarm5min = document.getElementById('alarm5min');
   const muteAlarm = document.getElementById('muteAlarm');
 
-  let glassSound = new Audio('glass06.mp3');
+  let glassSound = new Audio('mp3/glass06.mp3');
   let isAlarmPlaying = false;
   let alarmQueue = []; // 再生待ちのアラームを管理するキュー
 
   const alarmAudioFiles = {
-    "1min": new Audio('1fungo.mp3'),
-    "3min": new Audio('3fungo.mp3'),
-    "5min": new Audio('5fungo.mp3'),
-    "テラガード": new Audio('tera.mp3'),
-    "トゥリア": new Audio('tori.mp3'),
-    "アンゲロス": new Audio('ange.mp3'),
-    "フォントゥナス": new Audio('fon.mp3'),
-    "PVP": new Audio('PVP.mp3'),
-    "ch1": new Audio('ch1.mp3'),
-    "ch2": new Audio('ch2.mp3'),
-    "ch3": new Audio('ch3.mp3'),
-    "ch4": new Audio('ch4.mp3'),
-    "ch5": new Audio('ch5.mp3'),
-    "出現": new Audio('syutugen.mp3')
+    "1min": new Audio('mp3/1fungo.mp3'),
+    "3min": new Audio('mp3/3fungo.mp3'),
+    "5min": new Audio('mp3/5fungo.mp3'),
+    "テラガード": new Audio('mp3/tera.mp3'),
+    "トゥリア": new Audio('mp3/tori.mp3'),
+    "アンゲロス": new Audio('mp3/ange.mp3'),
+    "フォントゥナス": new Audio('mp3/fon.mp3'),
+    "PVP": new Audio('mp3/PVP.mp3'),
+    "ch1": new Audio('mp3/ch1.mp3'),
+    "ch2": new Audio('mp3/ch2.mp3'),
+    "ch3": new Audio('mp3/ch3.mp3'),
+    "ch4": new Audio('mp3/ch4.mp3'),
+    "ch5": new Audio('mp3/ch5.mp3'),
+    "出現": new Audio('mp3/syutugen.mp3')
   };
 
   // 事前に全ての音声ファイルを読み込む
@@ -296,7 +295,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   document.addEventListener('click', () => {
     if (!glassSound) {
-      glassSound = new Audio('glass06.mp3');
+      glassSound = new Audio('mp3/glass06.mp3');
     }
   }, { once: true });
 
