@@ -1,4 +1,4 @@
-import { updateNoteCard, showToast } from './ui.js';
+import { updateNoteCard, showToast, collectAndSortLogEntries } from './ui.js';
 import { saveLogs, loadLogs, saveTimeDisplays, loadTimeDisplays } from './storage.js';
 import { initializeTimePicker } from './timePicker.js';
 
@@ -163,51 +163,6 @@ export function initializeEventListeners() {
     }
   });
 
-  timePickerOkButton.addEventListener('click', () => {
-    if (!selectedChannelLabel) return;
-
-    const [inputHours, inputMinutes] = timeInput.value.trim().split(':').map(Number);
-    let currentTime = new Date();
-    currentTime.setHours(inputHours);
-    currentTime.setMinutes(inputMinutes);
-    currentTime.setSeconds(0); // 秒を0に設定
-
-    const channelName = selectedChannelLabel.childNodes[0].nodeValue.trim();
-    const areaName = selectedChannelLabel.closest('.area-tile').querySelector('.area-title').textContent.replace('（時刻順）', '');
-
-    const key = `${areaName}_${channelName}`;
-
-    // 時刻の調整を行う
-    let adjustedTime = currentTime;
-    while (Object.values(timeDisplays).some(storedTime => {
-      const storedDate = new Date(currentTime.toDateString() + ' ' + storedTime);
-      return storedDate.getHours() === adjustedTime.getHours() &&
-        storedDate.getMinutes() === adjustedTime.getMinutes() &&
-        storedDate.getSeconds() === adjustedTime.getSeconds();
-    })) {
-      adjustedTime.setSeconds(adjustedTime.getSeconds() + 1);
-    }
-
-    const newTime = adjustedTime.toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-
-    let timeDisplay = selectedChannelLabel.querySelector('.time-display');
-    if (!timeDisplay) {
-      timeDisplay = document.createElement('div');
-      timeDisplay.className = 'time-display';
-      selectedChannelLabel.appendChild(timeDisplay);
-    }
-
-    timeDisplay.innerHTML = `⏰${newTime.substring(0, 5)}`;
-
-    // 特定のエントリのみ更新し、他のエントリは維持する
-    timeDisplays[key] = newTime;
-    saveTimeDisplays(timeDisplays);
-
-    timePickerModal.style.display = 'none';
-
-    updateNoteCard();
-  });
-
   confirmButton.addEventListener('click', () => {
     switchScreen('logScreen');
     confirmButton.style.display = 'none';
@@ -227,8 +182,7 @@ export function initializeEventListeners() {
   });
 
   copyButton.addEventListener('click', () => {
-    logTextarea.select();
-    document.execCommand('copy');
+    navigator.clipboard.writeText(logTextarea.value);
     showToast('クリップボードにコピーしました');
   });
 
@@ -272,6 +226,7 @@ export function initializeEventListeners() {
 
   initializeTimePicker();
 }
+
 function switchScreen(screenId) {
   const currentScreen = document.querySelector('.screen:not([style*="display: none"])');
   if (currentScreen) {
