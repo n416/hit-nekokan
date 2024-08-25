@@ -40,9 +40,10 @@ export function initializeEventListeners() {
         timeDisplays: { ...timeDisplays }
       });
 
-      const currentTime = new Date();
+      const currentTime = new Date(); // ボタンを押した時刻
       const futureTime = new Date(currentTime.getTime() + 60 * 60 * 1000); // 1時間後
-      const time = futureTime.toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+      const currentTimeStr = currentTime.toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+      const futureTimeStr = futureTime.toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
 
       const logRow = button.closest('.log-row');
       const logLabel = logRow.querySelector('.log-label');
@@ -67,23 +68,25 @@ export function initializeEventListeners() {
       const paddedAreaTitle = padFullWidth(areaTitle, maxAreaLength);
       const paddedChannelName = padFullWidth(channelName, maxChannelLength);
 
-      const logEntry = `${paddedAreaTitle} ${paddedChannelName} ${time.substring(0, 5)}`;
+      // logScreenに表示する時刻（ボタンを押した時刻）
+      const logEntry = `${paddedAreaTitle} ${paddedChannelName} ${currentTimeStr.substring(0, 5)}`;
       logs.push(logEntry);
       logTextarea.value = logs.length > 0 ? logs.join('\n') : logTextarea.value;
       saveLogs(logs);
 
       button.textContent = '⏳🐈';
 
+      // time-displayに次に出現する時刻（1時間後の時刻）を表示
       let timeDisplay = logLabel.querySelector('.time-display');
       if (!timeDisplay) {
         timeDisplay = document.createElement('div');
         timeDisplay.className = 'time-display';
         logLabel.appendChild(timeDisplay);
       }
-      timeDisplay.innerHTML = `⏰${time.substring(0, 5)}`; // 表示上は時：分のみ
+      timeDisplay.innerHTML = `⏰${futureTimeStr.substring(0, 5)}`;
 
       const key = `${areaTitle}_${channelName}`;
-      timeDisplays[key] = time;
+      timeDisplays[key] = futureTimeStr;
       saveTimeDisplays(timeDisplays);
 
       showToast(`${areaTitle} ${channelName}のログを追加しました`);
