@@ -1,5 +1,4 @@
 import { saveTimeDisplays } from './storage.js';
-import {  } from './script.js'
 import { initializeEventListeners } from './events.js';
 
 import { initializeTimePicker } from './timePicker.js';

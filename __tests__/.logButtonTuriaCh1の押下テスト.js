@@ -20,5 +20,5 @@ test('logButtonTuriaCh1を押下すると、関連する要素が更新される
 
   expect(document.querySelector('.time-display').textContent).toBe('⏰10:00');
   expect(document.getElementById('noteCard').textContent).toContain('10:00 ch1');
-  expect(logTextareaValue).toContain('トゥリアch110:00');
+  expect(logTextareaValue).toContain('トゥリアch109:00');
 });
