@@ -36,5 +36,6 @@ document.addEventListener('DOMContentLoaded', () => {
   updateNoteCard();
 
   // 5秒ごとにノートカードを更新
+  updateNoteCard(); // 最初に一度だけ呼び出す
   setInterval(updateNoteCard, 5000);
 });

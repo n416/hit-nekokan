@@ -3,8 +3,6 @@ import { saveLogs, loadLogs, saveTimeDisplays, loadTimeDisplays } from './storag
 import { initializeTimePicker } from './timePicker.js';
 
 export function initializeEventListeners() {
-  //console.log('Initializing event listeners');
-
   let logs = loadLogs();
   let timeDisplays = loadTimeDisplays();
   let actionHistory = [];
@@ -40,7 +38,7 @@ export function initializeEventListeners() {
         timeDisplays: { ...timeDisplays }
       });
 
-      const currentTime = new Date(); // ボタンを押した時刻
+      const currentTime = new Date();
       const futureTime = new Date(currentTime.getTime() + 60 * 60 * 1000); // 1時間後
       const currentTimeStr = currentTime.toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
       const futureTimeStr = futureTime.toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
@@ -201,10 +199,12 @@ export function initializeEventListeners() {
 
     timeDisplay.innerHTML = `⏰${newTime.substring(0, 5)}`;
 
+    // 特定のエントリのみ更新し、他のエントリは維持する
     timeDisplays[key] = newTime;
     saveTimeDisplays(timeDisplays);
 
     timePickerModal.style.display = 'none';
+
     updateNoteCard();
   });
 
@@ -271,8 +271,6 @@ export function initializeEventListeners() {
   });
 
   initializeTimePicker();
-  setInterval(updateNoteCard, 5000);
-  updateNoteCard();
 }
 function switchScreen(screenId) {
   const currentScreen = document.querySelector('.screen:not([style*="display: none"])');
@@ -286,7 +284,6 @@ function switchScreen(screenId) {
     }, 300);
   }
 }
-
 
 function showConfirmModal() {
   const confirmModal = document.getElementById('confirmModal');
