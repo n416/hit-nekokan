@@ -20,13 +20,13 @@ export function saveLogs(logs) {
 export function loadTimeDisplays() {
   try {
     const timeDisplays = localStorage.getItem('timeDisplays');
-    console.log('Loaded timeDisplays:', timeDisplays);
+    // console.log('Loaded timeDisplays:', timeDisplays);
     if (!timeDisplays || timeDisplays === "undefined") {
       return {};  // 空のオブジェクトを返す
     }
     return JSON.parse(timeDisplays);
   } catch (error) {
-    console.error('Failed to load timeDisplays:', error);
+    // console.error('Failed to load timeDisplays:', error);
     return {}; // エラーが発生した場合でも、空のオブジェクトを返す
   }
 }
@@ -36,9 +36,9 @@ export function saveTimeDisplays(timeDisplays) {
     if (!timeDisplays) {
       timeDisplays = {}; // undefined の場合に空のオブジェクトで初期化
     }
-    console.log('Saving Time Displays:', timeDisplays);
+    // console.log('Saving Time Displays:', timeDisplays);
     localStorage.setItem('timeDisplays', JSON.stringify(timeDisplays));
   } catch (error) {
-    console.error('Failed to save timeDisplays:', error);
+    // console.error('Failed to save timeDisplays:', error);
   }
 }

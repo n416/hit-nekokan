@@ -20,7 +20,7 @@ export function updateNoteCard() {
   // ログの収集とソート
   collectAndSortLogEntries();
 
-  console.log('Ordered Log Entries after sorting:', orderedLogEntries);
+  //console.log('Ordered Log Entries after sorting:', orderedLogEntries);
 
   // `orderedLogEntries` が正しく収集されているか確認
   //    console.log('Ordered Log Entries:', orderedLogEntries);
@@ -60,11 +60,11 @@ function collectAndSortLogEntries() {
   const logEntries = [];
   const now = new Date();
 
-  console.log('Starting log entry collection...');
+  //console.log('Starting log entry collection...');
 
   // すべての .log-label 要素を取得
   const logLabels = document.querySelectorAll('.log-label');
-  console.log('Found log labels:', logLabels);
+  //console.log('Found log labels:', logLabels);
 
   logLabels.forEach(label => {
     const timeDisplay = label.querySelector('.time-display');
@@ -74,7 +74,7 @@ function collectAndSortLogEntries() {
       const key = `${areaTitle}_${channelName}`;
       const internalTimeString = timeDisplays[key];
 
-      console.log('Processing:', key, 'with internal time:', internalTimeString);
+      // console.log('Processing:', key, 'with internal time:', internalTimeString);
 
       if (internalTimeString) {
         const displayTime = internalTimeString.substring(0, 5);
@@ -89,10 +89,10 @@ function collectAndSortLogEntries() {
 
         logEntries.push({ time: internalTimeString, area: areaTitle, text: `${areaTitle} ${displayTime} ${channelName}`, logTime, class: entryClass });
       } else {
-        console.log('No internal time found for key:', key);
+        //console.log('No internal time found for key:', key);
       }
     } else {
-      console.log('No time display found for label:', label);
+      //console.log('No time display found for label:', label);
     }
   });
   // 秒単位でソート
@@ -104,7 +104,7 @@ function collectAndSortLogEntries() {
   if (futureEntries.length > 0) {
     futureEntries[0].class += ' closest-log';
   }
-  console.log('Final ordered log entries:', orderedLogEntries);
+  //console.log('Final ordered log entries:', orderedLogEntries);
 }
 
 export function showToast(message) {

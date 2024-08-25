@@ -3,7 +3,7 @@ import { saveLogs, loadLogs, saveTimeDisplays, loadTimeDisplays } from './storag
 import { initializeTimePicker } from './timePicker.js';
 
 export function initializeEventListeners() {
-  console.log('Initializing event listeners');
+  //console.log('Initializing event listeners');
 
   let logs = loadLogs();
   let timeDisplays = loadTimeDisplays();
@@ -11,7 +11,7 @@ export function initializeEventListeners() {
 
   const confirmButton = document.getElementById('confirmButton');
   const backButton = document.getElementById('backButton');
-  const saveButton = doFcument.getElementById('saveButton');
+  const saveButton = document.getElementById('saveButton');
   const copyButton = document.getElementById('copyButton');
   const clearButton = document.getElementById('clearButton');
   const undoButton = document.getElementById('undoButton');
@@ -28,7 +28,7 @@ export function initializeEventListeners() {
   const hourHand = document.querySelector('.hour-hand');
   const minuteHand = document.querySelector('.minute-hand');
 
-  logTextarea.value = logs.join('\n');
+  logTextarea.value = logs.length > 0 ? logs.join('\n') : logTextarea.value;
 
   const logButtons = document.querySelectorAll('.log-btn');
   logButtons.forEach((button) => {
@@ -69,7 +69,7 @@ export function initializeEventListeners() {
 
       const logEntry = `${paddedAreaTitle} ${paddedChannelName} ${time.substring(0, 5)}`;
       logs.push(logEntry);
-      logTextarea.value = logs.join('\n');
+      logTextarea.value = logs.length > 0 ? logs.join('\n') : logTextarea.value;
       saveLogs(logs);
 
       button.textContent = '⏳🐈';
@@ -84,7 +84,6 @@ export function initializeEventListeners() {
 
       const key = `${areaTitle}_${channelName}`;
       timeDisplays[key] = time;
-      console.log("hoge", timeDisplays);
       saveTimeDisplays(timeDisplays);
 
       showToast(`${areaTitle} ${channelName}のログを追加しました`);
@@ -272,7 +271,6 @@ export function initializeEventListeners() {
   setInterval(updateNoteCard, 5000);
   updateNoteCard();
 }
-
 function switchScreen(screenId) {
   const currentScreen = document.querySelector('.screen:not([style*="display: none"])');
   if (currentScreen) {
@@ -285,6 +283,7 @@ function switchScreen(screenId) {
     }, 300);
   }
 }
+
 
 function showConfirmModal() {
   const confirmModal = document.getElementById('confirmModal');

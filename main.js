@@ -5,9 +5,9 @@ import { initializeEventListeners } from './events.js';
 import { initializeTimePicker } from './timePicker.js';
 import { updateNoteCard } from './ui.js';
 import { loadTimeDisplays, loadLogs } from './storage.js';
-console.log('Main.js is running');
+//console.log('Main.js is running');
 document.addEventListener('DOMContentLoaded', () => {
-  console.log('DOMContentLoaded event fired in main.js');
+  //console.log('DOMContentLoaded event fired in main.js');
 
 
 
