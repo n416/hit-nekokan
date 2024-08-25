@@ -21,10 +21,6 @@ export function initializeEventListeners() {
   const toast = document.getElementById('toast');
   const resetButton = document.getElementById('resetButton');
   const timePickerModal = document.getElementById('timePickerModal');
-  const timePickerOkButton = document.getElementById('timePickerOkButton');
-  const timeInput = document.getElementById('timeInput');
-  const hourHand = document.querySelector('.hour-hand');
-  const minuteHand = document.querySelector('.minute-hand');
 
   logTextarea.value = logs.length > 0 ? logs.join('\n') : logTextarea.value;
 

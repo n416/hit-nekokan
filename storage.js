@@ -36,7 +36,6 @@ export function saveTimeDisplays(timeDisplays) {
     if (!timeDisplays) {
       timeDisplays = {}; // undefined の場合に空のオブジェクトで初期化
     }
-    // console.log('Saving Time Displays:', timeDisplays);
     localStorage.setItem('timeDisplays', JSON.stringify(timeDisplays));
   } catch (error) {
     // console.error('Failed to save timeDisplays:', error);

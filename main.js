@@ -15,9 +15,6 @@ document.addEventListener('DOMContentLoaded', () => {
   // イベントリスナーの初期化
   initializeEventListeners();
 
-  // 時間ピッカーの初期化
-  initializeTimePicker();
-
   // 5秒ごとにノートカードを更新
   updateNoteCard(); // 最初に一度だけ呼び出す
   setInterval(updateNoteCard, 5000);
