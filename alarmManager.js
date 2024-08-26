@@ -13,7 +13,7 @@ function playAudioSequentially(audioFiles) {
   currentAudio.onloadedmetadata = () => {
     const duration = currentAudio.duration;
 
-    // 次の音声を0.3秒早く再生する
+    // 次の音声を0.75秒早く再生する
     if (audioFiles.length > 1) {
       setTimeout(() => {
         playAudioSequentially(audioFiles.slice(1));
