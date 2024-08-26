@@ -6,15 +6,30 @@ let currentAlarmTimeout = null;
 
 function playAudioSequentially(audioFiles) {
   if (audioFiles.length === 0 || isMuted) return;
-  console.log('Playing:', audioFiles[0]); // 再生中のファイルをログ出力
-  
-  const audio = new Audio(audioFiles[0]);
-  audio.play().catch(error => {
-    console.error('Audio playback failed:', error);
-  });
 
-  audio.onended = () => {
-    setTimeout(() => playAudioSequentially(audioFiles.slice(1)), -300); // 次の音声を再生（0.3秒のラグ）
+  const currentAudio = new Audio(audioFiles[0]);
+
+  // 音声の長さを取得して次の音声再生をセット
+  currentAudio.onloadedmetadata = () => {
+    const duration = currentAudio.duration;
+
+    // 次の音声を0.3秒早く再生する
+    if (audioFiles.length > 1) {
+      setTimeout(() => {
+        playAudioSequentially(audioFiles.slice(1));
+      }, (duration - 0.75) * 1000);
+    }
+
+    console.log('Playing:', audioFiles[0]); // 再生中のファイルをログ出力
+    currentAudio.play().catch(error => {
+      console.error('Audio playback failed:', error);
+    });
+  };
+
+  currentAudio.onended = () => {
+    if (audioFiles.length === 1) {
+      currentAlarmTimeout = null; // 全ての音声が再生し終わったら、タイマーをクリア
+    }
   };
 }
 
