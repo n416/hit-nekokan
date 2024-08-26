@@ -6,7 +6,7 @@ let currentAlarmTimeout = null;
 
 function playAudioSequentially(audioFiles) {
   if (audioFiles.length === 0 || isMuted) return;
-  console.log('Playing:', audioFiles[0]); // 追加: 再生中のファイルをログ出力
+  console.log('Playing:', audioFiles[0]); // 再生中のファイルをログ出力
   
   const audio = new Audio(audioFiles[0]);
   audio.play().catch(error => {
@@ -14,20 +14,20 @@ function playAudioSequentially(audioFiles) {
   });
 
   audio.onended = () => {
-    setTimeout(() => playAudioSequentially(audioFiles.slice(1)), 300); // 0.3秒のラグ
+    setTimeout(() => playAudioSequentially(audioFiles.slice(1)), -300); // 次の音声を再生（0.3秒のラグ）
   };
 }
 
-function scheduleAlarm(time, area, channel, messageFile) {
-  // エリア名とチャンネル名をファイル名にマッピング
+function scheduleAlarm(time, area, channel, messageFile, entryTime) {
+  // エントリ時刻から指定した分数を引いてアラーム時刻を計算
+  const alarmTime = new Date(entryTime.getTime() - (time * 60000)).getTime();
+
   const areaFileMap = {
     "テラガード": "tera",
     "トゥリア": "tori",
     "アンゲロス": "ange",
     "フォントゥナス": "fon"
   };
-
-  const alarmTime = new Date().getTime() + time * 60000;
 
   const alarmEntry = {
     time: alarmTime,

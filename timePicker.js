@@ -61,18 +61,13 @@ export function initializeTimePicker() {
     const alarmTimes = [1, 3, 5]; // アラームの時間（1分前、3分前、5分前）
     alarmTimes.forEach(alarmTime => {
       if (document.getElementById(`alarm${alarmTime}min`).checked) {
-        const alarmScheduleTime = new Date(entryTime.getTime() - alarmTime * 60000);  // エントリ時刻から指定分数前の時刻を計算
-        const timeDifference = alarmScheduleTime - now;  // 現在時刻との差分を計算
-
-        console.log(`アラーム設定: ${alarmTime}分前に鳴らします。現在時刻: ${now}, アラーム時刻: ${alarmScheduleTime}, 残り時間: ${timeDifference}ミリ秒`);
-
-        if (timeDifference > 0) {
-          setTimeout(() => {
-            console.log(`${alarmTime}分前のアラームが鳴ります`);
-            scheduleAlarm(alarmTime, areaName, channelName, 'syutugen');
-          }, timeDifference);
-        } else {
+        const alarmScheduleTime = new Date(entryTime.getTime() - alarmTime * 60000);
+        const timeDifference = alarmScheduleTime.getTime() - now.getTime();
+        if (timeDifference < 0) {
           console.log(`アラーム時刻が過去のためスキップされました: ${alarmScheduleTime}`);
+        } else {
+          console.log(`アラーム設定: ${alarmTime}分前に鳴らします。現在時刻: ${now}, アラーム時刻: ${alarmScheduleTime}, 残り時間: ${timeDifference/1000}秒`);
+          scheduleAlarm(alarmTime, areaName, channelName, 'syutugen', entryTime);
         }
       }
     });
