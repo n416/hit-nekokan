@@ -2,6 +2,7 @@
 
 import { updateNoteCard } from './ui.js';
 import { saveTimeDisplays, loadTimeDisplays } from './storage.js';
+import { scheduleAlarm, muteAlarms, unmuteAlarms } from './alarmManager.js';
 
 export function initializeTimePicker() {
   const timePickerModal = document.getElementById('timePickerModal');
@@ -9,6 +10,7 @@ export function initializeTimePicker() {
   const timeInput = document.getElementById('timeInput');
   const hourHand = document.querySelector('.hour-hand');
   const minuteHand = document.querySelector('.minute-hand');
+  const muteAlarmCheckbox = document.getElementById('muteAlarm');
 
   let selectedChannelLabel = null;
   let timeDisplays = loadTimeDisplays();
@@ -17,29 +19,20 @@ export function initializeTimePicker() {
   timePickerOkButton.addEventListener('click', () => {
     if (!selectedChannelLabel) return;
 
+    // ユーザーが入力した時刻
     const [inputHours, inputMinutes] = timeInput.value.trim().split(':').map(Number);
-    let currentTime = new Date();
-    currentTime.setHours(inputHours);
-    currentTime.setMinutes(inputMinutes);
-    currentTime.setSeconds(0); // 秒を0に設定
+    let entryTime = new Date();
+    entryTime.setHours(inputHours);
+    entryTime.setMinutes(inputMinutes);
+    entryTime.setSeconds(0); // 秒を0に設定
 
     const channelName = selectedChannelLabel.childNodes[0].nodeValue.trim();
     const areaName = selectedChannelLabel.closest('.area-tile').querySelector('.area-title').textContent.replace('（時刻順）', '');
 
     const key = `${areaName}_${channelName}`;
 
-    // 時刻の調整を行う
-    let adjustedTime = currentTime;
-    while (Object.values(timeDisplays).some(storedTime => {
-      const storedDate = new Date(currentTime.toDateString() + ' ' + storedTime);
-      return storedDate.getHours() === adjustedTime.getHours() &&
-             storedDate.getMinutes() === adjustedTime.getMinutes() &&
-             storedDate.getSeconds() === adjustedTime.getSeconds();
-    })) {
-      adjustedTime.setSeconds(adjustedTime.getSeconds() + 1);
-    }
-
-    const newTime = adjustedTime.toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+    // 調整された時刻を保存
+    const newTime = entryTime.toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
 
     let timeDisplay = selectedChannelLabel.querySelector('.time-display');
     if (!timeDisplay) {
@@ -60,6 +53,29 @@ export function initializeTimePicker() {
 
     // ノートカードを更新
     updateNoteCard();
+
+    // 現在時刻を取得
+    const now = new Date();
+
+    // アラームのスケジュール設定
+    const alarmTimes = [1, 3, 5]; // アラームの時間（1分前、3分前、5分前）
+    alarmTimes.forEach(alarmTime => {
+      if (document.getElementById(`alarm${alarmTime}min`).checked) {
+        const alarmScheduleTime = new Date(entryTime.getTime() - alarmTime * 60000);  // エントリ時刻から指定分数前の時刻を計算
+        const timeDifference = alarmScheduleTime - now;  // 現在時刻との差分を計算
+
+        console.log(`アラーム設定: ${alarmTime}分前に鳴らします。現在時刻: ${now}, アラーム時刻: ${alarmScheduleTime}, 残り時間: ${timeDifference}ミリ秒`);
+
+        if (timeDifference > 0) {
+          setTimeout(() => {
+            console.log(`${alarmTime}分前のアラームが鳴ります`);
+            scheduleAlarm(alarmTime, areaName, channelName, 'syutugen');
+          }, timeDifference);
+        } else {
+          console.log(`アラーム時刻が過去のためスキップされました: ${alarmScheduleTime}`);
+        }
+      }
+    });
   });
 
   // ログラベルがクリックされたときの処理
@@ -88,10 +104,17 @@ export function initializeTimePicker() {
     updateClockHands(timeInput.value);
   });
 
-  // モーダルがクリックされたときの処理
-  timePickerModal.addEventListener('click', (e) => {
-    if (e.target === timePickerModal) {
-      timePickerModal.style.display = 'none';
+  // 鳴らさないチェックボックスの処理
+  muteAlarmCheckbox.addEventListener('change', () => {
+    const alarmCheckboxes = document.querySelectorAll('#alarm1min, #alarm3min, #alarm5min');
+    const isDisabled = muteAlarmCheckbox.checked;
+
+    if (isDisabled) {
+      muteAlarms();
+      alarmCheckboxes.forEach(cb => cb.disabled = true);
+    } else {
+      unmuteAlarms();
+      alarmCheckboxes.forEach(cb => cb.disabled = false);
     }
   });
 
