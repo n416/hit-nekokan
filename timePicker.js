@@ -63,12 +63,14 @@ export function initializeTimePicker() {
       if (document.getElementById(`alarm${alarmTime}min`).checked) {
         const alarmScheduleTime = new Date(entryTime.getTime() - alarmTime * 60000);
         const timeDifference = alarmScheduleTime.getTime() - now.getTime();
-        if (timeDifference < 0) {
+/*        if (timeDifference < 0) {
           console.log(`アラーム時刻が過去のためスキップされました: ${alarmScheduleTime}`);
         } else {
           console.log(`アラーム設定: ${alarmTime}分前に鳴らします。現在時刻: ${now}, アラーム時刻: ${alarmScheduleTime}, 残り時間: ${timeDifference/1000}秒`);
-          scheduleAlarm(alarmTime, areaName, channelName, 'syutugen', entryTime);
-        }
+          scheduleAlarm(timeDifference, alarmTime, areaName, channelName, 'syutugen');
+        }*/
+        console.log(`アラーム設定: ${alarmTime}分前に鳴らします。現在時刻: ${now}, アラーム時刻: ${alarmScheduleTime}, 残り時間: ${timeDifference/1000}秒`);
+        scheduleAlarm(timeDifference, alarmTime, areaName, channelName, 'syutugen');
       }
     });
   });

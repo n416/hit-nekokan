@@ -33,10 +33,11 @@ function playAudioSequentially(audioFiles) {
   };
 }
 
-function scheduleAlarm(time, area, channel, messageFile, entryTime) {
-  // エントリ時刻から指定した分数を引いてアラーム時刻を計算
-  const alarmTime = new Date(entryTime.getTime() - (time * 60000)).getTime();
+function scheduleAlarm(timeDifference, time, area, channel, message) {
 
+  const alarmTime = Date.now() + timeDifference;
+
+  console.log("alarmTime", new Date(alarmTime));
   const areaFileMap = {
     "テラガード": "tera",
     "トゥリア": "tori",
@@ -50,7 +51,7 @@ function scheduleAlarm(time, area, channel, messageFile, entryTime) {
       `./mp3/${time}fungo.mp3`,
       `./mp3/${areaFileMap[area]}.mp3`,
       `./mp3/${channel}.mp3`,
-      `./mp3/${messageFile}.mp3`
+      `./mp3/${message}.mp3`
     ]
   };
 
@@ -59,26 +60,34 @@ function scheduleAlarm(time, area, channel, messageFile, entryTime) {
 }
 
 function processAlarms() {
-  console.log("alarmQueue",alarmQueue)
-
+  // 現在アラームタイムアウトが設定されているか、キューが空なら何もしないで終了
   if (currentAlarmTimeout || alarmQueue.length === 0) return;
 
+  // 現在の時刻を取得（ミリ秒単位）
   const now = new Date().getTime();
+
+  // アラームキューを、アラームの時間に基づいて昇順にソート
   alarmQueue.sort((a, b) => a.time - b.time);
 
-  const nextAlarm = alarmQueue.shift();
+  // 最も早いアラームをキューから確認
+  const nextAlarm = alarmQueue[0];
 
+  // もしアラームの時間が現在の時刻よりも過去または同じなら、すぐにアラームを鳴らす
   if (nextAlarm.time <= now) {
-    playAudioSequentially(nextAlarm.audioFiles);
-    processAlarms();
+    alarmQueue.shift(); // アラームをキューから削除
+    playAudioSequentially(nextAlarm.audioFiles); // アラーム音を再生
+    processAlarms(); // 次のアラームを処理するため再帰的に関数を呼び出す
   } else {
+    // アラームの時間がまだ来ていない場合、その時間までタイムアウトを設定
     currentAlarmTimeout = setTimeout(() => {
-      playAudioSequentially(nextAlarm.audioFiles);
-      currentAlarmTimeout = null;
-      processAlarms();
-    }, nextAlarm.time - now);
+      alarmQueue.shift(); // アラームをキューから削除
+      playAudioSequentially(nextAlarm.audioFiles); // 指定の時間が来たらアラーム音を再生
+      currentAlarmTimeout = null; // タイムアウトが完了したのでリセット
+      processAlarms(); // 次のアラームを処理するため再帰的に関数を呼び出す
+    }, nextAlarm.time - now); // 今からアラーム時間までの待機時間を指定
   }
 }
+
 
 function clearAlarms() {
   if (currentAlarmTimeout) {
