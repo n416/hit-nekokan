@@ -37,7 +37,6 @@ function scheduleAlarm(timeDifference, time, area, channel, message) {
 
   const alarmTime = Date.now() + timeDifference;
 
-  console.log("alarmTime", new Date(alarmTime));
   const areaFileMap = {
     "テラガード": "tera",
     "トゥリア": "tori",
@@ -61,7 +60,7 @@ function scheduleAlarm(timeDifference, time, area, channel, message) {
 
 function processAlarms() {
   // 現在アラームタイムアウトが設定されているか、キューが空なら何もしないで終了
-  if (currentAlarmTimeout || alarmQueue.length === 0) return;
+  //if (currentAlarmTimeout || alarmQueue.length === 0) return;
 
   // 現在の時刻を取得（ミリ秒単位）
   const now = new Date().getTime();
