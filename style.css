@@ -556,6 +556,9 @@ body {
 }
 
 @media (max-width: 668px) {
+    .time-display {
+        border-top: none;
+    }
     .container {
         margin-top: 50px;
     }
@@ -584,6 +587,10 @@ body {
         gap: 5px;
     }
     .alarm-settings {
+        margin-top: 0;
         width: 100%;
+    }
+    .alarm-settings label {
+        font-size: 1rem;
     }
 }
