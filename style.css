@@ -555,7 +555,7 @@ body {
     font-weight: bold;
 }
 
-@media (max-width: 668px) {
+@media (max-width: 800px) {
     .time-display {
         border-top: none;
     }
@@ -580,7 +580,7 @@ body {
         padding: 10px;
     }
     .area-tile {
-        min-width: 110px;
+        min-width: 140px;
         padding: 10px;
     }
     .area-container {
