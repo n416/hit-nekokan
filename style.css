@@ -396,6 +396,7 @@ body {
     margin-top: -5px;
     border-top: 1px solid #333;
 }
+
 .time-input {
     width: 100%;
     font-size: 1.5rem;
@@ -544,13 +545,45 @@ body {
 
 .past-log {
     color: gray;
-  }
-  
-  .soon-log {
+}
+
+.soon-log {
     color: blue;
-  }
-  
-  .closest-log {
+}
+
+.closest-log {
     font-weight: bold;
-  }
-  
+}
+
+@media (max-width: 668px) {
+    .container {
+        margin-top: 50px;
+    }
+    .area-title {
+        font-size: 1rem;
+        padding: 0px;
+        margin-bottom: 5px;
+    }
+    .log-btn {
+        font-size: 1rem;
+    }
+    .log-row {
+        margin-bottom: 5px;
+    }
+    .log-label {
+        font-size: 1.1rem;
+    }
+    .btn {
+        padding: 10px;
+    }
+    .area-tile {
+        min-width: 110px;
+        padding: 10px;
+    }
+    .area-container {
+        gap: 5px;
+    }
+    .alarm-settings {
+        width: 100%;
+    }
+}
