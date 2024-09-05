@@ -631,7 +631,8 @@ body {
         padding: 5px;
     }
     #timePickerOkButton,
-    #timePickerClearButton {
+    #timePickerClearButton,
+    #channelToggleButton {
         font-size: 1rem;
     }
     .clock {

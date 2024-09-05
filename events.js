@@ -4,8 +4,6 @@ import { initializeTimePicker } from './timePicker.js';
 // グローバルに actionHistory を定義
 let actionHistory = [];
 let logs;
-let timeDisplays;
-
 
 export function initializeEventListeners() {
   actionHistory = [];
@@ -31,17 +29,9 @@ export function initializeEventListeners() {
 
   const logButtons = document.querySelectorAll('.log-btn');
   logButtons.forEach((button) => {
-    button.textContent = '🐈';
-
     button.addEventListener('click', () => {
-      actionHistory.push({
-        logs: [...logs],
-        timeDisplays: { ...timeDisplays }
-      });
-
       const currentTime = new Date();
       const futureTime = new Date(currentTime.getTime() + 60 * 60 * 1000); // 1時間後
-      const currentTimeStr = currentTime.toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
       const futureTimeStr = futureTime.toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
 
       const logRow = button.closest('.log-row');
@@ -49,13 +39,13 @@ export function initializeEventListeners() {
       const channelName = logLabel.childNodes[0].nodeValue.trim();
       const areaTitle = button.closest('.area-tile').querySelector('.area-title').textContent.replace('（時刻順）', '');
 
-      // ログ追加
-      addLogEntry(areaTitle, channelName, currentTime);
+      // ログと時刻を保存する共通関数を呼び出し
+      addLogAndTimeEntry(areaTitle, channelName, currentTime, futureTimeStr);
 
-      // logScreenに表示する時刻（ボタンを押した時刻）
+      // ボタンの表示を変更
       button.textContent = '!🐈';
 
-      // time-displayに次に出現する時刻（1時間後の時刻）を表示
+      // 時刻表示の更新
       let timeDisplay = logLabel.querySelector('.time-display');
       if (!timeDisplay) {
         timeDisplay = document.createElement('div');
@@ -64,25 +54,42 @@ export function initializeEventListeners() {
       }
       timeDisplay.innerHTML = `⏰${futureTimeStr.substring(0, 5)}`;
 
+      // 状態の保存
       const key = `${areaTitle}_${channelName}`;
       timeDisplays[key] = futureTimeStr;
       saveTimeDisplays(timeDisplays);
 
+      // アラームのスケジュール設定
+      const alarmTimes = [1, 3, 5]; // アラームの時間（1分前、3分前、5分前）
+      alarmTimes.forEach(alarmTime => {
+        if (document.getElementById(`alarm${alarmTime}min`).checked) {
+          const alarmScheduleTime = new Date(futureTime.getTime() - alarmTime * 60000);
+          const timeDifference = alarmScheduleTime.getTime() - currentTime.getTime();
+          if (timeDifference > 0) {
+            console.log(`アラーム設定: ${alarmTime}分前`);
+            scheduleAlarm(timeDifference, alarmTime, areaTitle, channelName, 'syutugen');
+          }
+        }
+      });
+      addLogAndTimeEntry
       updateNoteCard();
     });
 
+    // マウスオーバーで表示を変更
     button.addEventListener('mouseover', () => {
       if (button.textContent === '🐈') {
         button.textContent = '⚔️';
       }
     });
 
+    // マウスアウトで元に戻す
     button.addEventListener('mouseout', () => {
       if (button.textContent === '⚔️') {
         button.textContent = '🐈';
       }
     });
   });
+
 
   let selectedChannelLabel = null;
 
@@ -113,17 +120,21 @@ export function initializeEventListeners() {
 
   undoButton.addEventListener('click', () => {
     if (actionHistory.length > 0) {
-      const previousState = actionHistory.pop();  // 直前の状態を取得
+      // 直前の状態を取得
+      const previousState = actionHistory.pop();
+      // console.log("previousState", previousState);
+
       logs = previousState.logs;  // ログを元に戻す
       timeDisplays = previousState.timeDisplays;  // 時刻表示を元に戻す
 
       // logTextareaを復元
       logTextarea.value = logs.join('\n');  // ログテキストエリアに表示
-      saveLogs(logs);  // ローカルストレージに保存
 
-      saveTimeDisplays(timeDisplays);  // ローカルストレージに保存
+      // ローカルストレージに復元した状態を保存
+      saveLogs(logs);
+      saveTimeDisplays(timeDisplays);
 
-      // 表示中の時間をリセット
+      // 時刻表示をリセットして再描画
       document.querySelectorAll('.time-display').forEach(display => display.remove());
       document.querySelectorAll('.log-label').forEach(label => {
         const channelName = label.childNodes[0].nodeValue.trim();
@@ -141,11 +152,13 @@ export function initializeEventListeners() {
         }
       });
 
-      updateNoteCard();  // ノートカードを更新
+      // ノートカードを更新
+      updateNoteCard();
     } else {
       showToast('戻る操作はできません');
     }
   });
+
 
   confirmButton.addEventListener('click', () => {
     switchScreen('logScreen');
@@ -211,9 +224,14 @@ export function initializeEventListeners() {
   initializeTimePicker();
 }
 
-export function pushToActionHistory(logs, timeDisplays) {
-  actionHistory.push({ logs: [...logs], timeDisplays: { ...timeDisplays } });
+function pushToActionHistory(logs, timeDisplays) {
+  //console.log("logs===>", logs);
+  actionHistory.push({
+    logs: [...logs],  // 現在のログをコピーして保存
+    timeDisplays: { ...timeDisplays }  // 現在の時刻表示をコピーして保存
+  });
 }
+
 
 export function popActionHistory() {
   return actionHistory.length > 0 ? actionHistory.pop() : null;
@@ -228,10 +246,12 @@ export function setLogs(newLogs) {
   saveLogs(logs);  // ローカルストレージに保存
 }
 
+
+// グローバルではなく、getter/setterで管理
+let timeDisplays = loadTimeDisplays();
 export function getTimeDisplays() {
   return timeDisplays;
 }
-
 export function setTimeDisplays(newTimeDisplays) {
   timeDisplays = newTimeDisplays;
   saveTimeDisplays(timeDisplays);  // ローカルストレージに保存
@@ -269,7 +289,7 @@ function closeModal() {
 
 // 共通のログ整形と追加処理
 export function addLogEntry(areaTitle, channelName, logTime) {
-  const logs = loadLogs();
+  logs = loadLogs();  // 現在のログを取得
   const currentTimeStr = logTime.toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
 
   const padFullWidth = (str, length) => {
@@ -294,13 +314,52 @@ export function addLogEntry(areaTitle, channelName, logTime) {
   const logEntry = `${paddedAreaTitle} ${paddedChannelName} ${currentTimeStr.substring(0, 5)}`;
   logs.push(logEntry);
 
-  // logTextareaにログを表示
+  // 既存の内容に新しいログを追加して表示
   const logTextarea = document.getElementById('logTextarea');
-  logTextarea.value = logs.join('\n');
+  logTextarea.value = logs.join('\n');  // ここで、すべてのログを連結して表示
 
   // ログを保存
   saveLogs(logs);
 
   showToast(`${areaTitle} ${channelName}のログを追加しました`);
+}
+
+// 共通関数: ログと時刻を追加・保存
+export function addLogAndTimeEntry(areaTitle, channelName, logTime, futureTime) {
+
+  // 状態の保存は更新前に行う
+  pushToActionHistory(logs, timeDisplays);
+
+  // ログを追加
+  addLogEntry(areaTitle, channelName, logTime);
+
+  // 時刻表示を更新
+  const key = `${areaTitle}_${channelName}`;
+  timeDisplays[key] = futureTime;
+  saveTimeDisplays(timeDisplays);
+
+  // ここで時刻を表示する部分を修正
+  const labels = document.querySelectorAll('.log-label');
+  labels.forEach(label => {
+    const currentChannelName = label.childNodes[0].nodeValue.trim();
+    const currentAreaName = label.closest('.area-tile').querySelector('.area-title').textContent.replace('（時刻順）', '').trim();  // エリア名を取得
+
+    // エリア名とチャンネル名の両方が一致する場合のみ更新
+    if (currentChannelName === channelName && currentAreaName === areaTitle) {
+      let timeDisplay = label.querySelector('.time-display');
+      if (!timeDisplay) {
+        timeDisplay = document.createElement('div');
+        timeDisplay.className = 'time-display';
+        label.appendChild(timeDisplay);
+      }
+      timeDisplay.innerHTML = `⏰${futureTime.substring(0, 5)}`;
+    }
+  });
+
+  console.log("logs===>",logs);
+
+  // ノートカードを更新
+  updateNoteCard();
+
 }
 

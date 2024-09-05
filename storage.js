@@ -17,6 +17,7 @@ export function saveLogs(logs) {
     console.error('Failed to save logs:', error);
   }
 }
+
 export function loadTimeDisplays() {
   try {
     const timeDisplays = localStorage.getItem('timeDisplays');
