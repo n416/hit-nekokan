@@ -3,10 +3,12 @@
 import { updateNoteCard } from './ui.js';
 import { saveTimeDisplays, loadTimeDisplays } from './storage.js';
 import { scheduleAlarm, muteAlarms, unmuteAlarms } from './alarmManager.js';
+import { addLogEntry } from './events.js'; // 共通のログ関数をインポート
 
 export function initializeTimePicker() {
   const timePickerModal = document.getElementById('timePickerModal');
   const timePickerOkButton = document.getElementById('timePickerOkButton');
+  const timePickerClearButton = document.getElementById('timePickerClearButton'); // クリアボタンを取得
   const timeInput = document.getElementById('timeInput');
   const hourHand = document.querySelector('.hour-hand');
   const minuteHand = document.querySelector('.minute-hand');
@@ -48,6 +50,9 @@ export function initializeTimePicker() {
     timeDisplays[key] = newTime;
     saveTimeDisplays(timeDisplays);
 
+    // ログを追加する処理を呼び出し
+    addLogEntry(areaName, channelName, entryTime);
+
     // モーダルを閉じる
     timePickerModal.style.display = 'none';
 
@@ -73,6 +78,26 @@ export function initializeTimePicker() {
         scheduleAlarm(timeDifference, alarmTime, areaName, channelName, 'syutugen');
       }
     });
+  });
+
+  // クリアボタンの処理
+  timePickerClearButton.addEventListener('click', () => {
+    if (!selectedChannelLabel) return;
+
+    const channelName = selectedChannelLabel.childNodes[0].nodeValue.trim();
+    const areaName = selectedChannelLabel.closest('.area-tile').querySelector('.area-title').textContent.replace('（時刻順）', '');
+    const key = `${areaName}_${channelName}`;
+
+    // 表示と保存された時刻をクリア
+    let timeDisplay = selectedChannelLabel.querySelector('.time-display');
+    if (timeDisplay) {
+      selectedChannelLabel.removeChild(timeDisplay);
+    }
+    delete timeDisplays[key]; // ローカルストレージからも削除
+    saveTimeDisplays(timeDisplays);
+
+    timePickerModal.style.display = 'none';
+    updateNoteCard();
   });
 
   // ログラベルがクリックされたときの処理

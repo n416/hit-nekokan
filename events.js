@@ -44,30 +44,10 @@ export function initializeEventListeners() {
       const channelName = logLabel.childNodes[0].nodeValue.trim();
       const areaTitle = button.closest('.area-tile').querySelector('.area-title').textContent.replace('（時刻順）', '');
 
-      const padFullWidth = (str, length) => {
-        let fullWidthSpace = '　'; // 全角スペース
-        let currentLength = [...str].reduce((sum, char) => sum + (char.match(/[^\x00-\x7F]/) ? 2 : 1), 0);
-        let spacesToAdd = (length - currentLength) / 2;
-
-        if (spacesToAdd > 0) {
-          return str + fullWidthSpace.repeat(Math.max(0, spacesToAdd));
-        } else {
-          return str;
-        }
-      };
-
-      const maxAreaLength = 15;
-      const maxChannelLength = 2;
-
-      const paddedAreaTitle = padFullWidth(areaTitle, maxAreaLength);
-      const paddedChannelName = padFullWidth(channelName, maxChannelLength);
+      // ログ追加
+      addLogEntry(areaTitle, channelName, currentTime);
 
       // logScreenに表示する時刻（ボタンを押した時刻）
-      const logEntry = `${paddedAreaTitle} ${paddedChannelName} ${currentTimeStr.substring(0, 5)}`;
-      logs.push(logEntry);
-      logTextarea.value = logs.length > 0 ? logs.join('\n') : logTextarea.value;
-      saveLogs(logs);
-
       button.textContent = '!🐈';
 
       // time-displayに次に出現する時刻（1時間後の時刻）を表示
@@ -82,8 +62,6 @@ export function initializeEventListeners() {
       const key = `${areaTitle}_${channelName}`;
       timeDisplays[key] = futureTimeStr;
       saveTimeDisplays(timeDisplays);
-
-      showToast(`${areaTitle} ${channelName}のログを追加しました`);
 
       updateNoteCard();
     });
@@ -252,3 +230,41 @@ function closeModal() {
   const modal = document.getElementById('modal');
   modal.style.display = 'none';
 }
+
+// 共通のログ整形と追加処理
+export function addLogEntry(areaTitle, channelName, logTime) {
+  const logs = loadLogs();
+  const currentTimeStr = logTime.toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+
+  const padFullWidth = (str, length) => {
+    let fullWidthSpace = '　'; // 全角スペース
+    let currentLength = [...str].reduce((sum, char) => sum + (char.match(/[^\x00-\x7F]/) ? 2 : 1), 0);
+    let spacesToAdd = (length - currentLength) / 2;
+
+    if (spacesToAdd > 0) {
+      return str + fullWidthSpace.repeat(Math.max(0, spacesToAdd));
+    } else {
+      return str;
+    }
+  };
+
+  const maxAreaLength = 15;
+  const maxChannelLength = 2;
+
+  const paddedAreaTitle = padFullWidth(areaTitle, maxAreaLength);
+  const paddedChannelName = padFullWidth(channelName, maxChannelLength);
+
+  // 整形したログエントリ
+  const logEntry = `${paddedAreaTitle} ${paddedChannelName} ${currentTimeStr.substring(0, 5)}`;
+  logs.push(logEntry);
+
+  // logTextareaにログを表示
+  const logTextarea = document.getElementById('logTextarea');
+  logTextarea.value = logs.join('\n');
+
+  // ログを保存
+  saveLogs(logs);
+
+  showToast(`${areaTitle} ${channelName}のログを追加しました`);
+}
+
