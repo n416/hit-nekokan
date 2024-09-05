@@ -68,7 +68,7 @@ export function initializeEventListeners() {
       logTextarea.value = logs.length > 0 ? logs.join('\n') : logTextarea.value;
       saveLogs(logs);
 
-      button.textContent = '⏳🐈';
+      button.textContent = '!🐈';
 
       // time-displayに次に出現する時刻（1時間後の時刻）を表示
       let timeDisplay = logLabel.querySelector('.time-display');
