@@ -118,3 +118,11 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 });
+
+// timePickerModalの閉じるボタン
+const timePickerModalCloseButton = document.getElementById('timePickerModalCloseButton');
+
+// 閉じるボタンがクリックされたら、モーダルを非表示にする
+timePickerModalCloseButton.addEventListener('click', () => {
+  timePickerModal.style.display = 'none';
+});
