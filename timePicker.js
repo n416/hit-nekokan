@@ -1,7 +1,7 @@
 // timePicker.js
 
 import { updateNoteCard } from './ui.js';
-import { saveTimeDisplays, loadTimeDisplays } from './storage.js';
+import { saveTimeDisplays, loadTimeDisplays, loadDisabledChannels, saveDisabledChannels } from './storage.js';
 import { scheduleAlarm, muteAlarms, unmuteAlarms } from './alarmManager.js';
 import { addLogEntry } from './events.js'; // 共通のログ関数をインポート
 
@@ -16,6 +16,24 @@ export function initializeTimePicker() {
 
   let selectedChannelLabel = null;
   let timeDisplays = loadTimeDisplays();
+
+  // disabledChannelsをローカルストレージから取得
+  let disabledChannels = JSON.parse(localStorage.getItem('disabledChannels')) || {};
+
+  const areaNameMap = {
+    'トゥリア': 'Turia',
+    'テラガード': 'Terraguard',
+    'アンゲロス': 'Angelos',
+    'フォントゥナス': 'Fontunas'
+  };
+  const channelNameMap = {
+    'ch1': 'Ch1',
+    'ch2': 'Ch2',
+    'ch3': 'Ch3',
+    'ch4': 'Ch4',
+    'ch5': 'Ch5',
+    'PVP': 'PVP' // PVPはそのまま
+  };
 
   // タイムピッカーのOKボタンが押されたときの処理
   timePickerOkButton.addEventListener('click', () => {
@@ -68,13 +86,13 @@ export function initializeTimePicker() {
       if (document.getElementById(`alarm${alarmTime}min`).checked) {
         const alarmScheduleTime = new Date(entryTime.getTime() - alarmTime * 60000);
         const timeDifference = alarmScheduleTime.getTime() - now.getTime();
-/*        if (timeDifference < 0) {
-          console.log(`アラーム時刻が過去のためスキップされました: ${alarmScheduleTime}`);
-        } else {
-          console.log(`アラーム設定: ${alarmTime}分前に鳴らします。現在時刻: ${now}, アラーム時刻: ${alarmScheduleTime}, 残り時間: ${timeDifference/1000}秒`);
-          scheduleAlarm(timeDifference, alarmTime, areaName, channelName, 'syutugen');
-        }*/
-        console.log(`アラーム設定: ${alarmTime}分前に鳴らします。現在時刻: ${now}, アラーム時刻: ${alarmScheduleTime}, 残り時間: ${timeDifference/1000}秒`);
+        /*        if (timeDifference < 0) {
+                  console.log(`アラーム時刻が過去のためスキップされました: ${alarmScheduleTime}`);
+                } else {
+                  console.log(`アラーム設定: ${alarmTime}分前に鳴らします。現在時刻: ${now}, アラーム時刻: ${alarmScheduleTime}, 残り時間: ${timeDifference/1000}秒`);
+                  scheduleAlarm(timeDifference, alarmTime, areaName, channelName, 'syutugen');
+                }*/
+        console.log(`アラーム設定: ${alarmTime}分前に鳴らします。現在時刻: ${now}, アラーム時刻: ${alarmScheduleTime}, 残り時間: ${timeDifference / 1000}秒`);
         scheduleAlarm(timeDifference, alarmTime, areaName, channelName, 'syutugen');
       }
     });
@@ -100,10 +118,56 @@ export function initializeTimePicker() {
     updateNoteCard();
   });
 
+  // 「チャンネル無し」ボタンの処理
+  channelToggleButton.addEventListener('click', () => {
+    const disabledChannels = loadDisabledChannels();  // ローカルストレージから読み込み
+
+    if (!selectedChannelLabel) return;
+
+    const channelName = selectedChannelLabel.childNodes[0].nodeValue.trim();
+    const areaName = selectedChannelLabel.closest('.area-tile').querySelector('.area-title').textContent.replace('（時刻順）', '');
+
+    const mappedChannelName = channelNameMap[channelName] || channelName;
+    const englishAreaName = areaNameMap[areaName] || areaName;
+    const key = `${englishAreaName}_${mappedChannelName}`;
+    const logButton = document.querySelector(`#logButton${englishAreaName}${mappedChannelName}`);
+
+    if (logButton) {
+      if (disabledChannels[key]) {
+        delete disabledChannels[key];  // チャンネル有りに戻す
+        logButton.disabled = false;
+        logButton.classList.remove('disabled-log-btn');
+        channelToggleButton.textContent = 'チャンネル無し';
+      } else {
+        disabledChannels[key] = true;  // チャンネル無しにする
+        logButton.disabled = true;
+        logButton.classList.add('disabled-log-btn');
+        channelToggleButton.textContent = 'チャンネル有り';
+      }
+
+      saveDisabledChannels(disabledChannels);  // ローカルストレージに保存
+    }
+    timePickerModal.style.display = 'none';
+  });
+
   // ログラベルがクリックされたときの処理
   document.querySelectorAll('.log-label').forEach(label => {
     label.addEventListener('click', () => {
       selectedChannelLabel = label;
+      const channelName = selectedChannelLabel.childNodes[0].nodeValue.trim();
+      const areaName = selectedChannelLabel.closest('.area-tile').querySelector('.area-title').textContent.replace('（時刻順）', '');
+
+      // チャンネル名とエリア名をマップで変換
+      const mappedChannelName = channelNameMap[channelName] || channelName;
+      const englishAreaName = areaNameMap[areaName] || areaName;
+      const key = `${englishAreaName}_${mappedChannelName}`;
+
+      // チャンネル無し状態かどうかを確認してボタンのキャプションを変更
+      if (disabledChannels[key]) {
+        channelToggleButton.textContent = 'チャンネル有り';  // チャンネル無し状態の場合は「チャンネル有り」に変更
+      } else {
+        channelToggleButton.textContent = 'チャンネル無し';  // チャンネル有り状態の場合は「チャンネル無し」に
+      }
 
       const timeDisplay = selectedChannelLabel.querySelector('.time-display');
 

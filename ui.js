@@ -1,6 +1,6 @@
 
 // ui.js
-import { loadTimeDisplays, saveTimeDisplays } from './storage.js';
+import { loadTimeDisplays, saveTimeDisplays, loadDisabledChannels, saveDisabledChannels } from './storage.js';
 
 let timeDisplays = loadTimeDisplays();
 
@@ -102,3 +102,19 @@ export function showToast(message) {
     toast.className = 'toast';
   }, 3000);
 }
+
+// ページロード時にボタンの状態を復元
+document.addEventListener('DOMContentLoaded', () => {
+  const disabledChannels = loadDisabledChannels();  // ローカルストレージから取得
+
+  Object.keys(disabledChannels).forEach(key => {
+    const [englishAreaName, channelName] = key.split('_');
+    const logButtonId = `#logButton${englishAreaName}${channelName}`;
+    const logButton = document.querySelector(logButtonId);
+
+    if (logButton) {
+      logButton.disabled = true;  // ボタンを無効化
+      logButton.classList.add('disabled-log-btn');  // スタイルを適用
+    }
+  });
+});

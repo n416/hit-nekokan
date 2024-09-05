@@ -41,3 +41,13 @@ export function saveTimeDisplays(timeDisplays) {
     // console.error('Failed to save timeDisplays:', error);
   }
 }
+
+// ローカルストレージからdisabledChannelsを読み込む
+export function loadDisabledChannels() {
+  return JSON.parse(localStorage.getItem('disabledChannels')) || {};
+}
+
+// ローカルストレージにdisabledChannelsを保存する
+export function saveDisabledChannels(disabledChannels) {
+  localStorage.setItem('disabledChannels', JSON.stringify(disabledChannels));
+}
