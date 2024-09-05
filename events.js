@@ -1,11 +1,16 @@
 import { updateNoteCard, showToast, collectAndSortLogEntries } from './ui.js';
 import { saveLogs, loadLogs, saveTimeDisplays, loadTimeDisplays } from './storage.js';
 import { initializeTimePicker } from './timePicker.js';
+// グローバルに actionHistory を定義
+let actionHistory = [];
+let logs;
+let timeDisplays;
+
 
 export function initializeEventListeners() {
-  let logs = loadLogs();
-  let timeDisplays = loadTimeDisplays();
-  let actionHistory = [];
+  actionHistory = [];
+  logs = loadLogs();
+  timeDisplays = loadTimeDisplays();
 
   const confirmButton = document.getElementById('confirmButton');
   const backButton = document.getElementById('backButton');
@@ -108,12 +113,17 @@ export function initializeEventListeners() {
 
   undoButton.addEventListener('click', () => {
     if (actionHistory.length > 0) {
-      const previousState = actionHistory.pop();
-      logs = previousState.logs;
-      timeDisplays = previousState.timeDisplays;
-      logTextarea.value = logs.join('\n');
-      saveTimeDisplays(timeDisplays);
+      const previousState = actionHistory.pop();  // 直前の状態を取得
+      logs = previousState.logs;  // ログを元に戻す
+      timeDisplays = previousState.timeDisplays;  // 時刻表示を元に戻す
 
+      // logTextareaを復元
+      logTextarea.value = logs.join('\n');  // ログテキストエリアに表示
+      saveLogs(logs);  // ローカルストレージに保存
+
+      saveTimeDisplays(timeDisplays);  // ローカルストレージに保存
+
+      // 表示中の時間をリセット
       document.querySelectorAll('.time-display').forEach(display => display.remove());
       document.querySelectorAll('.log-label').forEach(label => {
         const channelName = label.childNodes[0].nodeValue.trim();
@@ -127,11 +137,11 @@ export function initializeEventListeners() {
             timeDisplay.className = 'time-display';
             label.appendChild(timeDisplay);
           }
-          timeDisplay.innerHTML = `⏰${timeDisplays[key].substring(0, 5)}`; // 表示上は時：分のみ
+          timeDisplay.innerHTML = `⏰${timeDisplays[key].substring(0, 5)}`;
         }
       });
 
-      updateNoteCard();
+      updateNoteCard();  // ノートカードを更新
     } else {
       showToast('戻る操作はできません');
     }
@@ -199,6 +209,32 @@ export function initializeEventListeners() {
   });
 
   initializeTimePicker();
+}
+
+export function pushToActionHistory(logs, timeDisplays) {
+  actionHistory.push({ logs: [...logs], timeDisplays: { ...timeDisplays } });
+}
+
+export function popActionHistory() {
+  return actionHistory.length > 0 ? actionHistory.pop() : null;
+}
+
+export function getLogs() {
+  return logs;
+}
+
+export function setLogs(newLogs) {
+  logs = newLogs;
+  saveLogs(logs);  // ローカルストレージに保存
+}
+
+export function getTimeDisplays() {
+  return timeDisplays;
+}
+
+export function setTimeDisplays(newTimeDisplays) {
+  timeDisplays = newTimeDisplays;
+  saveTimeDisplays(timeDisplays);  // ローカルストレージに保存
 }
 
 function switchScreen(screenId) {

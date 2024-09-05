@@ -3,7 +3,7 @@
 import { updateNoteCard } from './ui.js';
 import { saveTimeDisplays, loadTimeDisplays, loadDisabledChannels, saveDisabledChannels } from './storage.js';
 import { scheduleAlarm, muteAlarms, unmuteAlarms } from './alarmManager.js';
-import { addLogEntry } from './events.js'; // 共通のログ関数をインポート
+import { addLogEntry, pushToActionHistory, getLogs, setLogs, getTimeDisplays, setTimeDisplays } from './events.js'; // 共通のログ関数をインポート
 
 export function initializeTimePicker() {
   const timePickerModal = document.getElementById('timePickerModal');
@@ -15,7 +15,6 @@ export function initializeTimePicker() {
   const muteAlarmCheckbox = document.getElementById('muteAlarm');
 
   let selectedChannelLabel = null;
-  let timeDisplays = loadTimeDisplays();
 
   // disabledChannelsをローカルストレージから取得
   let disabledChannels = JSON.parse(localStorage.getItem('disabledChannels')) || {};
@@ -39,17 +38,22 @@ export function initializeTimePicker() {
   timePickerOkButton.addEventListener('click', () => {
     if (!selectedChannelLabel) return;
 
-    // ユーザーが入力した時刻
+    const channelName = selectedChannelLabel.childNodes[0].nodeValue.trim();
+    const areaName = selectedChannelLabel.closest('.area-tile').querySelector('.area-title').textContent.replace('（時刻順）', '');
+    const key = `${areaName}_${channelName}`;
+    // logs と timeDisplays を取得
+    const logs = getLogs();
+    let timeDisplays = getTimeDisplays();
+
+    // 操作履歴に追加
+    pushToActionHistory(logs, timeDisplays);
+
+    // タイムピッカーの操作処理
     const [inputHours, inputMinutes] = timeInput.value.trim().split(':').map(Number);
     let entryTime = new Date();
     entryTime.setHours(inputHours);
     entryTime.setMinutes(inputMinutes);
     entryTime.setSeconds(0); // 秒を0に設定
-
-    const channelName = selectedChannelLabel.childNodes[0].nodeValue.trim();
-    const areaName = selectedChannelLabel.closest('.area-tile').querySelector('.area-title').textContent.replace('（時刻順）', '');
-
-    const key = `${areaName}_${channelName}`;
 
     // 調整された時刻を保存
     const newTime = entryTime.toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
