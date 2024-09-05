@@ -66,10 +66,18 @@ export function collectAndSortLogEntries() {
         const logTime = new Date(now.toDateString() + ' ' + internalTimeString);
 
         let entryClass = '';
-        if (logTime < now) {
-          entryClass = 'past-log';
-        } else if (logTime > now && (logTime - now) <= 5 * 60 * 1000) {
+        const timeDifference = logTime - now;
+        const fiveMinits = 5 * 60 * 1000;
+
+        if (timeDifference > 0 && timeDifference <= fiveMinits) {
+          // 今から5分以内の未来の時刻は soon-log
           entryClass = 'soon-log';
+        } else if (timeDifference < 0 && Math.abs(timeDifference) <= fiveMinits) {
+          // 5分以内の過去の時刻も soon-log
+          entryClass = 'soon-log';
+        } else if (timeDifference < 0) {
+          // 5分以上過去の時刻は past-log
+          entryClass = 'past-log';
         }
 
         logEntries.push({ time: internalTimeString, area: areaTitle, text: `${areaTitle} ${displayTime} ${channelName}`, logTime, class: entryClass });
