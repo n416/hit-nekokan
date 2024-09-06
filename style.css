@@ -420,7 +420,6 @@ body {
     border-radius: 50%;
     margin: 0 auto;
     background-color: #fff;
-    rotate: 90deg;
 }
 
 .clock .hour-hand,
@@ -431,7 +430,6 @@ body {
     background-color: #333;
     top: 50%;
     transform-origin: 100%;
-    transform: rotate(90deg);
 }
 .clock .hour-hand {
     width: 35%; /* 針の長さ */
@@ -440,7 +438,6 @@ body {
     top: 50%;
     left: 50%;
     transform-origin: 0 0; /* 針の根元を基準に回転させる */
-    transform: rotate(90deg);
 }
 
 .clock .minute-hand {

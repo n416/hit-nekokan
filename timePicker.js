@@ -201,8 +201,8 @@ export function initializeTimePicker() {
   // 時計の針を更新する関数
   function updateClockHands(time) {
     const [hours, minutes] = time.split(':').map(Number);
-    const hoursDegree = ((hours % 12) / 12) * 360 + (minutes / 60) * 30;
-    const minutesDegree = (minutes / 60) * 360;
+    const hoursDegree = ((hours % 12) / 12) * 360 + (minutes / 60) * 30 - 90;
+    const minutesDegree = (minutes / 60) * 360 - 90;
 
     // 要素が存在する場合にのみスタイルを設定
     if (hourHand && minuteHand) {
