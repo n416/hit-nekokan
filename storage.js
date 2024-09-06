@@ -21,7 +21,6 @@ export function saveLogs(logs) {
 export function loadTimeDisplays() {
   try {
     const timeDisplays = localStorage.getItem('timeDisplays');
-    // console.log('Loaded timeDisplays:', timeDisplays);
     if (!timeDisplays || timeDisplays === "undefined") {
       return {};  // 空のオブジェクトを返す
     }

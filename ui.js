@@ -6,7 +6,6 @@ let timeDisplays = loadTimeDisplays();
 
 // timeDisplays が undefined の場合、空のオブジェクトで初期化
 if (!timeDisplays) {
-  console.log('Initializing timeDisplays as an empty object');
   timeDisplays = {};
   saveTimeDisplays(timeDisplays); // 初期化後に保存
 }

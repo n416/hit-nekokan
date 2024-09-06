@@ -122,7 +122,6 @@ export function initializeEventListeners() {
     if (actionHistory.length > 0) {
       // 直前の状態を取得
       const previousState = actionHistory.pop();
-      // console.log("previousState", previousState);
 
       logs = previousState.logs;  // ログを元に戻す
       timeDisplays = previousState.timeDisplays;  // 時刻表示を元に戻す
@@ -225,7 +224,6 @@ export function initializeEventListeners() {
 }
 
 function pushToActionHistory(logs, timeDisplays) {
-  //console.log("logs===>", logs);
   actionHistory.push({
     logs: [...logs],  // 現在のログをコピーして保存
     timeDisplays: { ...timeDisplays }  // 現在の時刻表示をコピーして保存
@@ -355,8 +353,6 @@ export function addLogAndTimeEntry(areaTitle, channelName, logTime, futureTime) 
       timeDisplay.innerHTML = `⏰${futureTime.substring(0, 5)}`;
     }
   });
-
-  console.log("logs===>",logs);
 
   // ノートカードを更新
   updateNoteCard();

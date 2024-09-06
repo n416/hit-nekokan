@@ -124,7 +124,6 @@ export function initializeTimePicker() {
     const logButton = document.querySelector(`#logButton${englishAreaName}${mappedChannelName}`);
 
     if (logButton) {
-      console.log("befor", disabledChannels);
       if (disabledChannels[key]) {
         delete disabledChannels[key];  // チャンネル有りに戻す
         logButton.disabled = false;
@@ -134,10 +133,8 @@ export function initializeTimePicker() {
         logButton.disabled = true;
         logButton.classList.add('disabled-log-btn');
       }
-      console.log("after",disabledChannels);
 
       saveDisabledChannels(disabledChannels);  // ローカルストレージに保存
-      console.log("saved",loadDisabledChannels());
     }
     timePickerModal.style.display = 'none';
   });
