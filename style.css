@@ -603,10 +603,6 @@ body {
     color: #000;
   }
   
-  /* ホバー時のスタイル */
-  .modal-close-btn:hover {
-    color: #f00;  /* ホバー時は赤にする */
-  }
 @media (max-width: 800px) {
     .time-display {
         border-top: none;
@@ -616,8 +612,16 @@ body {
     }
     .area-title {
         font-size: 1rem;
-        padding: 0px;
-        margin-bottom: 5px;
+        position: relative;
+        left: -10px;
+        right: -10px;
+        top: -10px;
+        width: calc(100% + 20px);
+        border-radius: 5px 5px 0 0;
+        margin-bottom: -3px;
+        box-shadow: inset 0px 2px 2px -2px;
+        padding: 3px 0 4px 0;
+        box-sizing: border-box;
     }
     .log-btn {
         font-size: 1rem;
