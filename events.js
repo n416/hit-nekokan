@@ -43,7 +43,7 @@ export function initializeEventListeners() {
       addLogAndTimeEntry(areaTitle, channelName, currentTime, futureTimeStr);
 
       // ボタンの表示を変更
-      button.textContent = '!🐈';
+      button.innerHTML = '!<i class="fas fa-skull-crossbones"></i>';
 
       // 時刻表示の更新
       let timeDisplay = logLabel.querySelector('.time-display');
@@ -52,7 +52,7 @@ export function initializeEventListeners() {
         timeDisplay.className = 'time-display';
         logLabel.appendChild(timeDisplay);
       }
-      timeDisplay.innerHTML = `⏰${futureTimeStr.substring(0, 5)}`;
+      timeDisplay.innerHTML = `<i class="far fa-clock"></i>&nbsp;${futureTimeStr.substring(0, 5)}`;
 
       // 状態の保存
       const key = `${areaTitle}_${channelName}`;
@@ -77,15 +77,17 @@ export function initializeEventListeners() {
 
     // マウスオーバーで表示を変更
     button.addEventListener('mouseover', () => {
-      if (button.textContent === '🐈') {
-        button.textContent = '⚔️';
+      console.log(button.innerHTML);
+      if (button.innerHTML === '<i class="fas fa-cat"></i>') {
+        button.innerHTML = '<i class="fas fa-skull-crossbones"></i>';
       }
     });
 
     // マウスアウトで元に戻す
     button.addEventListener('mouseout', () => {
-      if (button.textContent === '⚔️') {
-        button.textContent = '🐈';
+      if (button.innerHTML === '!<i class="fas fa-skull-crossbones"></i>') return;
+      if (button.innerHTML === '<i class="fas fa-skull-crossbones"></i>') {
+        button.innerHTML = '<i class="fas fa-cat"></i>';
       }
     });
   });
@@ -106,7 +108,7 @@ export function initializeEventListeners() {
         timeDisplay.className = 'time-display';
         label.appendChild(timeDisplay);
       }
-      timeDisplay.innerHTML = `⏰${timeDisplays[key].substring(0, 5)}`; // 表示上は時：分のみ
+      timeDisplay.innerHTML = `<i class="far fa-clock"></i>&nbsp;${timeDisplays[key].substring(0, 5)}`; // 表示上は時：分のみ
     }
   });
 
@@ -147,7 +149,7 @@ export function initializeEventListeners() {
             timeDisplay.className = 'time-display';
             label.appendChild(timeDisplay);
           }
-          timeDisplay.innerHTML = `⏰${timeDisplays[key].substring(0, 5)}`;
+          timeDisplay.innerHTML = `<i class="far fa-clock"></i>&nbsp;${timeDisplays[key].substring(0, 5)}`;
         }
       });
 
@@ -350,7 +352,7 @@ export function addLogAndTimeEntry(areaTitle, channelName, logTime, futureTime) 
         timeDisplay.className = 'time-display';
         label.appendChild(timeDisplay);
       }
-      timeDisplay.innerHTML = `⏰${futureTime.substring(0, 5)}`;
+      timeDisplay.innerHTML = `<i class="far fa-clock"></i>&nbsp;${futureTime.substring(0, 5)}`;
     }
   });
 

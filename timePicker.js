@@ -60,7 +60,7 @@ export function initializeTimePicker() {
       timeDisplay.className = 'time-display';
       selectedChannelLabel.appendChild(timeDisplay);
     }
-    timeDisplay.innerHTML = `⏰${newTimeStr.substring(0, 5)}`;
+    timeDisplay.innerHTML = `<i class="far fa-clock"></i>&nbsp;${newTimeStr.substring(0, 5)}`;
 
     // 状態の保存
     const key = `${areaName}_${channelName}`;
@@ -163,7 +163,7 @@ export function initializeTimePicker() {
       const timeDisplay = selectedChannelLabel.querySelector('.time-display');
 
       if (timeDisplay) {
-        timeInput.value = timeDisplay.textContent.trim().replace('⏰', '').trim();
+        timeInput.value = timeDisplay.textContent.trim().replace('<i class="fal fa-clock"></i>', '').trim();
       } else {
         const currentTime = new Date();
         const hours = String(currentTime.getHours()).padStart(2, '0');
