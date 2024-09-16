@@ -597,7 +597,9 @@ body {
 .modal-close-btn::after {
     transform: rotate(-45deg);
 }
-
+#noteCard {
+    padding: 15px;
+}
 @media (max-width: 845px) {
     .container {
         margin-top: 35px;
@@ -679,7 +681,11 @@ body {
     .log-label {
         padding-right: 5px;
     }
+    #noteCard {
+        padding: 10px;
+    }
 }
+
 .log-row:last-child {
     margin-bottom: 0;
 }
