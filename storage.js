@@ -51,3 +51,16 @@ export function loadDisabledChannels() {
 export function saveDisabledChannels(disabledChannels) {
   localStorage.setItem('disabledChannels', JSON.stringify(disabledChannels));
 }
+
+// 各エリアごとにチャンネル数を保存する
+export function saveChannelCount(areaName, channelCount) {
+  const channelSettings = JSON.parse(localStorage.getItem('channelSettings')) || {};
+  channelSettings[areaName] = channelCount;
+  localStorage.setItem('channelSettings', JSON.stringify(channelSettings));
+}
+
+// 各エリアごとのチャンネル数を取得する
+export function loadChannelCount(areaName) {
+  const channelSettings = JSON.parse(localStorage.getItem('channelSettings')) || {};
+  return channelSettings[areaName] || 5;  // デフォルトは1チャンネル
+}

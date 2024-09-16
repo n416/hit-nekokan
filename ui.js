@@ -1,6 +1,6 @@
 
 // ui.js
-import { loadTimeDisplays, saveTimeDisplays, loadDisabledChannels, saveDisabledChannels } from './storage.js';
+import { loadTimeDisplays, saveTimeDisplays, loadDisabledChannels, loadChannelCount, saveChannelCount } from './storage.js';
 
 let timeDisplays = loadTimeDisplays();
 
@@ -124,4 +124,92 @@ const timePickerModalCloseButton = document.getElementById('timePickerModalClose
 // 閉じるボタンがクリックされたら、モーダルを非表示にする
 timePickerModalCloseButton.addEventListener('click', () => {
   timePickerModal.style.display = 'none';
+});
+
+
+document.querySelectorAll('.area-title').forEach(areaTitle => {
+  areaTitle.addEventListener('click', () => {
+    const areaName = areaTitle.textContent ? areaTitle.textContent.trim() : '';  // エリア名を取得
+    if (areaName) {
+      openChannelSettingsModal(areaName);  // モーダルを開く
+    }
+  });
+});
+
+function openChannelSettingsModal(areaName) {
+  const modal = document.getElementById('channelSettingsModal');
+  modal.style.display = 'flex';  // モーダルを表示
+  const channelCountInput = document.getElementById('channelCountInput');
+  const currentChannelCount = loadChannelCount(areaName);
+
+  // 現在のチャンネル数を入力欄に表示
+  channelCountInput.value = currentChannelCount;
+
+  document.getElementById('channelCountOkButton').onclick = () => {
+    const channelCount = parseInt(channelCountInput.value, 10);
+    if (channelCount >= 1 && channelCount <= 10) {
+      saveChannelCount(areaName, channelCount);  // エリアごとのチャンネル数を保存
+      adjustChannelDisplay(areaName, channelCount);  // エリアごとの表示を調整
+    }
+    modal.style.display = 'none';  // モーダルを閉じる
+  };
+}
+
+// ページロード時に各エリアのチャンネル数を適用
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('.area-tile').forEach(areaTile => {
+    const areaTitleElement = areaTile.querySelector('.area-title');
+    if (areaTitleElement) {
+      const areaName = areaTitleElement.textContent.trim();
+      const channelCount = loadChannelCount(areaName);
+      adjustChannelDisplay(areaName, channelCount);
+    }
+  });
+});
+
+function adjustChannelDisplay(areaName, channelCount) {
+  const areaTile = Array.from(document.querySelectorAll('.area-tile')).find(tile => {
+    return tile.querySelector('.area-title').textContent.trim() === areaName;
+  });
+
+  if (!areaTile) {
+    console.error(`Area tile for ${areaName} not found`);
+    return;
+  }
+  console.log("channelCount", channelCount);
+  // PVP行を除いたlog-rowの表示を設定 (入力値 + 1)
+  for (let i = 1; i <= 10; i++) {
+    // PVPが1行目にあるため、実際のチャンネルはnth-child(i + 2)から始まる
+    const logRow = areaTile.querySelector(`.log-row:nth-child(${i + 2})`);  // i + 2でPVPを飛ばす
+    if (i <= channelCount) {
+      logRow.style.display = 'flex';  // チャンネルを表示
+    } else {
+      logRow.style.display = 'none';  // チャンネルを非表示
+    }
+  }
+}
+
+// ページロード時に各エリアのチャンネル数を適用
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('.area-tile').forEach(areaTile => {
+    const areaTitleElement = areaTile.querySelector('.area-title');
+    if (areaTitleElement) {
+      const areaName = areaTitleElement.textContent.trim();
+      const channelCount = loadChannelCount(areaName);
+      adjustChannelDisplay(areaName, channelCount);
+    }
+  });
+});
+
+// 閉じるボタンのイベントリスナー
+document.getElementById('channelSettingsModalCloseButton').addEventListener('click', () => {
+  const modal = document.getElementById('channelSettingsModal');
+  modal.style.display = 'none';  // モーダルを非表示にする
+});
+
+const channelSettingsModal = document.getElementById('channelSettingsModal');
+channelSettingsModal.addEventListener('click', (event) => {
+  if (event.target === channelSettingsModal) {
+    channelSettingsModal.style.display = 'none';
+  }
 });

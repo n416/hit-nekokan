@@ -56,6 +56,23 @@
           <div class="log-label">ch6</div>
           <div class="log-button-container"><button id="logButtonTerraguardCh6" class="btn log-btn">🐈</button></div>
         </div>
+        <!-- ch7～ch10: 初期は非表示 -->
+        <div class="log-row" style="display:none;">
+          <div class="log-label">ch7</div>
+          <div class="log-button-container"><button id="logButtonTerraguardCh7" class="btn log-btn">🐈</button></div>
+        </div>
+        <div class="log-row" style="display:none;">
+          <div class="log-label">ch8</div>
+          <div class="log-button-container"><button id="logButtonTerraguardCh8" class="btn log-btn">🐈</button></div>
+        </div>
+        <div class="log-row" style="display:none;">
+          <div class="log-label">ch9</div>
+          <div class="log-button-container"><button id="logButtonTerraguardCh9" class="btn log-btn">🐈</button></div>
+        </div>
+        <div class="log-row" style="display:none;">
+          <div class="log-label">ch10</div>
+          <div class="log-button-container"><button id="logButtonTerraguardCh10" class="btn log-btn">🐈</button></div>
+        </div>
       </div>
 
       <!-- トゥリア -->
@@ -88,6 +105,23 @@
         <div class="log-row">
           <div class="log-label">ch6</div>
           <div class="log-button-container"><button id="logButtonTuriaCh6" class="btn log-btn">🐈</button></div>
+        </div>
+        <!-- ch7～ch10: 初期は非表示 -->
+        <div class="log-row" style="display:none;">
+          <div class="log-label">ch7</div>
+          <div class="log-button-container"><button id="logButtonTuriaCh7" class="btn log-btn">🐈</button></div>
+        </div>
+        <div class="log-row" style="display:none;">
+          <div class="log-label">ch8</div>
+          <div class="log-button-container"><button id="logButtonTuriaCh8" class="btn log-btn">🐈</button></div>
+        </div>
+        <div class="log-row" style="display:none;">
+          <div class="log-label">ch9</div>
+          <div class="log-button-container"><button id="logButtonTuriaCh9" class="btn log-btn">🐈</button></div>
+        </div>
+        <div class="log-row" style="display:none;">
+          <div class="log-label">ch10</div>
+          <div class="log-button-container"><button id="logButtonTuriaCh10" class="btn log-btn">🐈</button></div>
         </div>
       </div>
 
@@ -122,6 +156,23 @@
           <div class="log-label">ch6</div>
           <div class="log-button-container"><button id="logButtonAngelosCh6" class="btn log-btn">🐈</button></div>
         </div>
+        <!-- ch7～ch10: 初期は非表示 -->
+        <div class="log-row" style="display:none;">
+          <div class="log-label">ch7</div>
+          <div class="log-button-container"><button id="logButtonAngelosCh7" class="btn log-btn">🐈</button></div>
+        </div>
+        <div class="log-row" style="display:none;">
+          <div class="log-label">ch8</div>
+          <div class="log-button-container"><button id="logButtonAngelosCh8" class="btn log-btn">🐈</button></div>
+        </div>
+        <div class="log-row" style="display:none;">
+          <div class="log-label">ch9</div>
+          <div class="log-button-container"><button id="logButtonAngelosCh9" class="btn log-btn">🐈</button></div>
+        </div>
+        <div class="log-row" style="display:none;">
+          <div class="log-label">ch10</div>
+          <div class="log-button-container"><button id="logButtonAngelosCh10" class="btn log-btn">🐈</button></div>
+        </div>
       </div>
 
       <!-- フォントゥナス -->
@@ -154,6 +205,23 @@
         <div class="log-row">
           <div class="log-label">ch6</div>
           <div class="log-button-container"><button id="logButtonFontunasCh6" class="btn log-btn">🐈</button></div>
+        </div>
+        <!-- ch7～ch10: 初期は非表示 -->
+        <div class="log-row" style="display:none;">
+          <div class="log-label">ch7</div>
+          <div class="log-button-container"><button id="logButtonFontunasCh7" class="btn log-btn">🐈</button></div>
+        </div>
+        <div class="log-row" style="display:none;">
+          <div class="log-label">ch8</div>
+          <div class="log-button-container"><button id="logButtonFontunasCh8" class="btn log-btn">🐈</button></div>
+        </div>
+        <div class="log-row" style="display:none;">
+          <div class="log-label">ch9</div>
+          <div class="log-button-container"><button id="logButtonFontunasCh9" class="btn log-btn">🐈</button></div>
+        </div>
+        <div class="log-row" style="display:none;">
+          <div class="log-label">ch10</div>
+          <div class="log-button-container"><button id="logButtonFontunasCh10" class="btn log-btn">🐈</button></div>
         </div>
       </div>
 
@@ -198,6 +266,22 @@
       <button id="confirmNoButton" class="btn">いいえ</button>
     </div>
   </div>
+
+  <!-- チャンネル数設定モーダル -->
+  <div id="channelSettingsModal" class="modal">
+    <div class="modal-content">
+      <!-- 時計の部分をチャンネル設定に変更 -->
+      <label for="channelCountInput">チャンネル数 (1〜10):</label>
+      <input type="number" id="channelCountInput" min="1" max="10" class="time-input">
+
+      <!-- ボタン類 -->
+      <button id="channelCountOkButton" class="btn">OK</button>
+
+      <!-- 閉じるボタン -->
+      <button id="channelSettingsModalCloseButton" class="modal-close-btn"></button>
+    </div>
+  </div>
+
   <!-- 時刻入力モーダル -->
   <div id="timePickerModal" class="modal">
     <div class="modal-content">
@@ -211,7 +295,7 @@
       <button id="timePickerClearButton" class="btn">クリア</button>
       <button id="channelToggleButton" class="btn">ボタンを無効にする</button>
       <!-- 閉じるボタンを追加 -->
-      <button id="timePickerModalCloseButton" class="modal-close-btn">×</button>
+      <button id="timePickerModalCloseButton" class="modal-close-btn"></button>
     </div>
   </div>
 
