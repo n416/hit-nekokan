@@ -25,7 +25,7 @@ body {
 }
 
 .header .title {
-    font-size: 1.2em;
+    font-size: 1em;
     font-weight: bold;
     flex-grow: 1;
     text-align: center;
@@ -44,7 +44,7 @@ body {
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     padding: 20px;
-    margin-top: 90px; /* ヘッダーの高さを考慮 */
+    margin-top: 60px; /* ヘッダーの高さを考慮 */
     box-sizing: border-box;
     display: flex;
     flex-wrap: wrap;
@@ -106,11 +106,11 @@ body {
     width: 100%;
     justify-content: center;
     align-items: center;
-    margin-bottom: 20px;
+    margin-bottom: 10px;
 }
 
 .log-label {
-    font-size: 1.7rem;
+    font-size: 1.4rem;
     padding-right: 10px;
     color: #555;
     width: 50px;
@@ -136,24 +136,35 @@ body {
     justify-content: space-between;
     width: 100%;
     flex-wrap: wrap;
-    gap: 20px; /* タイル間のスペース */
+    gap: 15px;
+    padding: 0 15px;
+    box-sizing: border-box;
 }
 
 .area-tile {
     background-color: #ffffff;
-    border-radius: 10px;
+    border-radius: 5px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     padding: 15px;
     flex: 1;
     min-width: 150px;
+    overflow: hidden;
+    
 }
 
 .area-title {
     font-size: 1rem;
-    margin-bottom: 10px;
-    padding: 5px;
+    margin-bottom: 0;
+    padding: 6px;
     color: white;
     text-align: center;
+    position: relative;
+    left: -15px;
+    top: -15px;
+    width: calc(100% + 30px);
+    box-sizing: border-box;
+    border-radius: 5px 5px 0 0;
+    box-shadow: inset 0 1px 0px,0 0.5px 0px #a0a0a0;
 }
 
 .terraguard .area-title {
@@ -184,10 +195,10 @@ body {
     color: white;
     border-radius: 50%;
     padding: 10px;
-    width: 40px;
-    height: 40px;
+    width: 35px;
+    height: 35px;
     line-height: 0.5rem;
-    font-size: 1.5em;
+    font-size: 1em;
     position: relative;
     margin: 0;
     border: none;
@@ -395,7 +406,6 @@ body {
     text-align: center;
     margin-top: 5px;
     margin-top: -5px;
-    border-top: 1px solid #333;
 }
 
 .time-input {
@@ -538,7 +548,6 @@ body {
 
 /* アラーム設定のスタイル */
 .alarm-settings {
-    margin-top: 20px;
     padding: 10px;
     background-color: #f9f9f9;
     border-radius: 8px;
@@ -601,12 +610,9 @@ body {
     font-size: 24px;
     cursor: pointer;
     color: #000;
-  }
-  
+}
+
 @media (max-width: 800px) {
-    .time-display {
-        border-top: none;
-    }
     .container {
         margin-top: 35px;
     }
@@ -636,11 +642,12 @@ body {
         padding: 7px;
     }
     .area-tile {
-        min-width: 140px;
+        min-width: 130px;
         padding: 10px;
     }
     .area-container {
         gap: 5px;
+        padding: 0 10px;
     }
     .alarm-settings {
         margin-top: 0;
@@ -668,16 +675,20 @@ body {
     .header .title {
         font-size: 0.8rem;
     }
-    .confirm-btn, .back-btn {
+    .confirm-btn,
+    .back-btn {
         width: 30px;
         height: 30px;
         line-height: 0.5rem;
         font-size: 0.8em;
     }
-    .header-btn{
+    .header-btn {
         font-size: 1.2rem;
     }
     .header {
         padding: 5px;
     }
+}
+.log-row:last-child {
+    margin-bottom: 0;
 }
