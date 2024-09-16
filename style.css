@@ -608,7 +608,7 @@ body {
         border-top: none;
     }
     .container {
-        margin-top: 50px;
+        margin-top: 35px;
     }
     .area-title {
         font-size: 1rem;
@@ -667,5 +667,17 @@ body {
     }
     .header .title {
         font-size: 0.8rem;
+    }
+    .confirm-btn, .back-btn {
+        width: 30px;
+        height: 30px;
+        line-height: 0.5rem;
+        font-size: 0.8em;
+    }
+    .header-btn{
+        font-size: 1.2rem;
+    }
+    .header {
+        padding: 5px;
     }
 }
