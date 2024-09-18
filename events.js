@@ -3,6 +3,7 @@ import { saveLogs, loadLogs, saveTimeDisplays, loadTimeDisplays, generateShareab
 import { initializeTimePicker } from './timePicker.js';
 // グローバルに actionHistory を定義
 let actionHistory = [];
+let redoHistory = [];
 let logs;
 
 export function initializeEventListeners() {
@@ -16,6 +17,7 @@ export function initializeEventListeners() {
   const copyButton = document.getElementById('copyButton');
   const clearButton = document.getElementById('clearButton');
   const undoButton = document.getElementById('undoButton');
+  const redoButton = document.getElementById('redoButton');
   const confirmModalCloseButton = document.getElementById('confirmModalCloseButton');
   const confirmYesButton = document.getElementById('confirmYesButton');
   const confirmNoButton = document.getElementById('confirmNoButton');
@@ -126,6 +128,12 @@ export function initializeEventListeners() {
       // 直前の状態を取得
       const previousState = actionHistory.pop();
 
+      // リドゥ用に現在の状態を保存
+      redoHistory.push({
+        logs: [...logs],
+        timeDisplays: { ...timeDisplays }
+      });
+
       logs = previousState.logs;  // ログを元に戻す
       timeDisplays = previousState.timeDisplays;  // 時刻表示を元に戻す
 
@@ -146,6 +154,42 @@ export function initializeEventListeners() {
       updateNoteCard();
     } else {
       showToast('戻る操作はできません');
+    }
+  });
+
+  // redoボタンの機能
+  redoButton.addEventListener('click', () => {
+    if (redoHistory.length > 0) {
+      // 直前のリドゥ状態を取得
+      const redoState = redoHistory.pop();
+  
+      // アンドゥ用に現在の状態を保存
+      actionHistory.push({
+        logs: [...logs],
+        timeDisplays: { ...timeDisplays }
+      });
+  
+      // リドゥ状態に復元
+      logs = redoState.logs;
+      timeDisplays = redoState.timeDisplays;
+  
+      // logTextareaを復元
+      logTextarea.value = logs.join('\n');
+  
+      // ローカルストレージに復元した状態を保存
+      saveLogs(logs);
+      saveTimeDisplays(timeDisplays);
+  
+      // 時刻表示をリセットして再描画
+      document.querySelectorAll('.time-display').forEach(display => display.remove());
+  
+      // 時刻ラベルを更新
+      updateTimeDisplay();
+  
+      // ノートカードを更新
+      updateNoteCard();
+    } else {
+      showToast('進む操作はできません');
     }
   });
 
@@ -330,6 +374,8 @@ export function addLogEntry(areaTitle, channelName, logTime) {
 
 // 共通関数: ログと時刻を追加・保存
 export function addLogAndTimeEntry(areaTitle, channelName, logTime, futureTime) {
+  // 新しい操作が発生したのでリドゥ履歴をクリア
+  redoHistory = [];
 
   // 状態の保存は更新前に行う
   pushToActionHistory(logs, timeDisplays);
