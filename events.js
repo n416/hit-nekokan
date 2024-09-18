@@ -358,6 +358,9 @@ export function addLogAndTimeEntry(areaTitle, channelName, logTime, futureTime) 
     }
   });
 
+  // ノートカードを更新
+  updateNoteCard();
+
 }
 document.getElementById('shareButton').addEventListener('click', () => {
   const shareUrl = generateShareableUrl();  // ローカルストレージからURLを生成
