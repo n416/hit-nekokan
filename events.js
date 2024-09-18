@@ -424,3 +424,18 @@ document.getElementById('shareButton').addEventListener('click', () => {
     console.error('Failed to copy URL: ', err);
   });
 });
+
+document.getElementById('toggleTimeDisplay').addEventListener('click', () => {
+  const checkboxIcon = document.getElementById('checkboxIcon');
+  
+  if (checkboxIcon.classList.contains('fa-square')) {
+    checkboxIcon.classList.remove('fa-square');
+    checkboxIcon.classList.add('fa-square-check');
+  } else {
+    checkboxIcon.classList.remove('fa-square-check');
+    checkboxIcon.classList.add('fa-square');
+  }
+
+  // ノートカードを更新
+  updateNoteCard();
+});

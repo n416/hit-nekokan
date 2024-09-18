@@ -232,8 +232,16 @@
       </div>
 
       <!-- ノート -->
-      <div id="noteCard" class="area-tile"></div>
-
+      <!-- ノートカードとチェックボックスをラップするdivを追加 -->
+      <div id="noteWrapper" class="note-wrapper">
+        <div id="noteCard" class="area-tile">
+          <!-- Noteのコンテンツが表示される部分 -->
+        </div>
+        <div id="toggleTimeDisplay">
+          <i id="checkboxIcon" class="fa-regular fa-square"></i> 時刻を表示しない
+        </div>
+      </div>
+      
       <!-- ノートカードの下にアラーム設定を追加 -->
       <div id="alarmSettings" class="alarm-settings">
         <label><input type="checkbox" id="alarm1min"> 1分前</label>

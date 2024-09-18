@@ -17,23 +17,30 @@ export function updateNoteCard() {
 
   let lastArea = null;
   const formattedEntries = [];
+  const hideTime = document.getElementById('checkboxIcon').classList.contains('fa-square-check'); // チェックが入っているか確認
+console.log("orderedLogEntries",orderedLogEntries);
+
   orderedLogEntries.forEach((entry, index) => {
-    if (lastArea !== null && lastArea !== entry.area) {
-      formattedEntries.push('<hr>');
-      formattedEntries.push(`<span class="${entry.class}">${entry.text}</span>`);  // 新しい地域の場合は地域名を表示
-    } else if (lastArea !== null && lastArea === entry.area) {
-      const shortenedText = entry.text.replace(`${entry.area} `, '');
-      formattedEntries.push(`<span class="${entry.class}">${shortenedText}</span>`);
+    console.log(entry.area);
+    if (lastArea !== entry.area) {
+      if (formattedEntries.length > 0) {
+        formattedEntries.push('<hr>');
+      }
+      // 時刻を非表示にする場合
+      if (hideTime) {
+        formattedEntries.push(`<span class="${entry.class}">${entry.area} ${entry.channel}</span>`);
+      } else {
+        formattedEntries.push(`<span class="${entry.class}">${entry.area} ${entry.channel} ${entry.time.substring(0, 5)}</span>`);
+      }
     } else {
-      formattedEntries.push(`<span class="${entry.class}">${entry.text}</span>`);  // 最初のエントリの場合は地域名を表示
+      if (hideTime) {
+        formattedEntries.push(`<span class="${entry.class}">${entry.channel}</span>`);
+      } else {
+        formattedEntries.push(`<span class="${entry.class}">${entry.channel} ${entry.time.substring(0, 5)}</span>`);
+      }
     }
     lastArea = entry.area;
   });
-
-  // 最後の区切り線を除去する
-  if (formattedEntries.length > 0 && formattedEntries[formattedEntries.length - 1] === '<hr>') {
-    formattedEntries.pop();
-  }
 
   const noteCard = document.getElementById('noteCard');
   if (formattedEntries.length > 0) {
@@ -110,7 +117,7 @@ export function collectAndSortLogEntries() {
           entryClass = 'past-log';
         }
 
-        logEntries.push({ time: internalTimeString, area: areaTitle, text: `${areaTitle} ${displayTime} ${channelName}`, logTime, class: entryClass });
+        logEntries.push({ time: internalTimeString, area: areaTitle, channel: channelName, text: `${areaTitle} ${displayTime} ${channelName}`, logTime, class: entryClass });
       }
     }
   });
