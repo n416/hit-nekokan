@@ -268,6 +268,12 @@ export function initializeEventListeners() {
       e.preventDefault();
       undoButton.click();
     }
+
+    if (e.ctrlKey && e.key === 'y') {
+      e.preventDefault();
+      redoButton.click();
+    }
+
   });
 
   initializeTimePicker();
