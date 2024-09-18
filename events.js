@@ -78,7 +78,6 @@ export function initializeEventListeners() {
 
     // マウスオーバーで表示を変更
     button.addEventListener('mouseover', () => {
-      console.log(button.innerHTML);
       if (button.innerHTML === '<i class="fas fa-cat"></i>') {
         button.innerHTML = '<i class="fas fa-skull-crossbones"></i>';
       }
