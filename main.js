@@ -1,19 +1,30 @@
-import { saveTimeDisplays } from './storage.js';
+import { showOverwriteModal } from './ui.js';
+import { loadFromUrlParams, loadLogs, removeHistoryGetData } from './storage.js';
 import { initializeEventListeners } from './events.js';
-
-import { initializeTimePicker } from './timePicker.js';
-import { updateNoteCard, collectAndSortLogEntries } from './ui.js';
-import { loadTimeDisplays, loadLogs } from './storage.js';
+import { updateNoteCard } from './ui.js';
 
 document.addEventListener('DOMContentLoaded', () => {
-  // ローカルストレージからデータをロード
-  const logs = loadLogs();
-  let timeDisplays = loadTimeDisplays();
+  const existingData = loadLogs();  // ローカルストレージ内のデータを確認
 
-  // イベントリスナーの初期化
-  initializeEventListeners();
+  if (new URLSearchParams(window.location.search).has('data') && existingData.length > 0) {
 
-  // 5秒ごとにノートカードを更新
-  updateNoteCard(); // 最初に一度だけ呼び出す
-  setInterval(updateNoteCard, 5000);
+    // 上書き確認モーダルを表示して、ユーザーの選択後に処理を続ける
+    showOverwriteModal(() => {
+      // ユーザーがOKを押した場合、GETパラメータのデータをロードしてから初期化
+      loadFromUrlParams();
+      initializeEventListeners();
+      updateNoteCard(); // ノートカードを更新
+    }, () => {
+      // ユーザーがキャンセルを押した場合、通常の初期化
+      initializeEventListeners();
+      updateNoteCard();
+    });
+  } else {
+    // 上書き確認の必要がない場合は直接データをロード
+    loadFromUrlParams();
+    initializeEventListeners();
+    updateNoteCard();
+    // URLのクエリパラメータからdataを削除
+    removeHistoryGetData()
+  }
 });

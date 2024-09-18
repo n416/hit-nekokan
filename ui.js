@@ -1,7 +1,6 @@
 
 // ui.js
-import { loadTimeDisplays, saveTimeDisplays, loadDisabledChannels, loadChannelCount, saveChannelCount } from './storage.js';
-
+import { loadTimeDisplays, saveTimeDisplays, loadDisabledChannels, loadChannelCount, saveChannelCount, removeHistoryGetData } from './storage.js';
 let timeDisplays = loadTimeDisplays();
 
 // timeDisplays が undefined の場合、空のオブジェクトで初期化
@@ -44,6 +43,26 @@ export function updateNoteCard() {
     noteCard.innerHTML = '';
     noteCard.classList.remove('active');
   }
+}
+
+export function updateTimeDisplay() {
+  const labels = document.querySelectorAll('.log-label');
+  labels.forEach(label => {
+    const channelName = label.childNodes[0].nodeValue.trim();
+    const areaName = label.closest('.area-tile').querySelector('.area-title').textContent.replace('（時刻順）', '');
+    const key = `${areaName}_${channelName}`;
+
+    // keyがtimeDisplaysに存在するか確認してから操作
+    if (timeDisplays && timeDisplays[key]) {
+      let timeDisplay = label.querySelector('.time-display');
+      if (!timeDisplay) {
+        timeDisplay = document.createElement('div');
+        timeDisplay.className = 'time-display';
+        label.appendChild(timeDisplay);
+      }
+      timeDisplay.innerHTML = `<i class="far fa-clock"></i>&nbsp;${timeDisplays[key].substring(0, 5)}`;
+    }
+  });
 }
 
 export function collectAndSortLogEntries() {
@@ -213,3 +232,45 @@ channelSettingsModal.addEventListener('click', (event) => {
     channelSettingsModal.style.display = 'none';
   }
 });
+
+export function showOverwriteModal(onConfirm, onCancel) {
+  const overwriteModal = document.getElementById('overwriteModal');
+  overwriteModal.style.display = 'flex';
+
+  // OKボタンを押したときの処理
+  document.getElementById('overwriteYesButton').addEventListener('click', () => {
+    onConfirm();
+
+    // URLからGETパラメータを削除
+    removeHistoryGetData();
+
+    overwriteModal.style.display = 'none';
+  });
+
+  // キャンセルボタンを押したときの処理
+  document.getElementById('overwriteNoButton').addEventListener('click', () => {
+    onCancel();
+    // URLからGETパラメータを削除
+    removeHistoryGetData();
+    overwriteModal.style.display = 'none';
+  });
+
+  // 閉じるボタンを押したときの処理（キャンセルと同様）
+  document.getElementById('overwriteModalCloseButton').addEventListener('click', () => {
+    onCancel();
+    // URLからGETパラメータを削除
+    removeHistoryGetData();
+    overwriteModal.style.display = 'none';
+  });
+
+  // モーダル背景をクリックしたときにキャンセル処理を行う
+  overwriteModal.addEventListener('click', (event) => {
+    if (event.target === overwriteModal) {
+      onCancel();
+      // URLからGETパラメータを削除
+      removeHistoryGetData();
+      overwriteModal.style.display = 'none';
+    }
+  });
+}
+

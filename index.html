@@ -7,6 +7,8 @@
   <link href="style.css" rel="stylesheet">
   <link href="./fontawesome/css/fontawesome.css" rel="stylesheet" />
   <link href="./fontawesome/css/solid.css" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/lz-string@1.4.4/libs/lz-string.min.js"></script>
+
   <title>NEKO-KAN</title>
 </head>
 
@@ -16,6 +18,7 @@
     <div class="top-left-align">
       <button id="resetButton" class="header-btn"><i class="fas fa-trash"></i></button>
       <button id="undoButton" class="header-btn"><i class="fas fa-history"></i></button>
+      <button id="shareButton" class="header-btn" title="シェア"><i class="fas fa-share-alt"></i></button>
     </div>
     <div class="title">NEKO-KAN</div>
     <div class="top-right-align">
@@ -300,7 +303,15 @@
       <button id="timePickerModalCloseButton" class="modal-close-btn"></button>
     </div>
   </div>
-
+  <!-- 上書き確認モーダルウィンドウ -->
+  <div id="overwriteModal" class="modal">
+    <div class="modal-content">
+      <span id="overwriteModalCloseButton" class="modal-close-btn"></span>
+      <p>すでに存在するログが上書きされます。宜しいですか？</p>
+      <button id="overwriteYesButton" class="btn">はい</button> <!-- 共通のボタンクラス "btn" を適用 -->
+      <button id="overwriteNoButton" class="btn">キャンセル</button> <!-- 共通のボタンクラス "btn" を適用 -->
+    </div>
+  </div>
   <script src="main.js" type="module"></script>
 </body>
 

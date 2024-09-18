@@ -97,9 +97,7 @@ body {
     cursor: pointer;
     transition: background-color 0.3s;
     margin: 5px 0;
-}
-
-.modal-content .btn {
+    background-color: #d7d7d7;
 }
 
 .log-row {
@@ -250,7 +248,7 @@ body {
 
 .save-btn,
 .copy-btn {
-    background-color: #ccc;
+    background-color: #d7d7d7;
     color: #333;
     margin-bottom: 10px;
 }
@@ -503,7 +501,7 @@ body {
 .note-card {
     margin-top: 20px;
     padding: 15px;
-    border: 1px solid #ccc;
+    border: 1px solid #d7d7d7;
     border-radius: 8px;
     background-color: #f9f9f9;
     box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
@@ -684,7 +682,9 @@ body {
     #noteCard {
         padding: 10px;
     }
-    .save-btn, .copy-btn, #confirmYesButton {
+    .save-btn,
+    .copy-btn,
+    #confirmYesButton {
         margin-bottom: 10px;
     }
 }
@@ -692,3 +692,11 @@ body {
 .log-row:last-child {
     margin-bottom: 0;
 }
+
+#noteCard hr {
+    border: none;
+    border-bottom: 1px dashed #9a9a9a;
+    padding: 0;
+    margin: 5px 0;
+}
+

@@ -1,5 +1,5 @@
 import { updateNoteCard, showToast, collectAndSortLogEntries } from './ui.js';
-import { saveLogs, loadLogs, saveTimeDisplays, loadTimeDisplays } from './storage.js';
+import { saveLogs, loadLogs, saveTimeDisplays, loadTimeDisplays, generateShareableUrl, loadFromUrlParams } from './storage.js';
 import { initializeTimePicker } from './timePicker.js';
 // グローバルに actionHistory を定義
 let actionHistory = [];
@@ -24,6 +24,7 @@ export function initializeEventListeners() {
   const toast = document.getElementById('toast');
   const resetButton = document.getElementById('resetButton');
   const timePickerModal = document.getElementById('timePickerModal');
+  const shareButton = document.getElementById('shareButton');
 
   logTextarea.value = logs.length > 0 ? logs.join('\n') : logTextarea.value;
 
@@ -120,6 +121,7 @@ export function initializeEventListeners() {
     }
   });
 
+  // undoボタンの機能
   undoButton.addEventListener('click', () => {
     if (actionHistory.length > 0) {
       // 直前の状態を取得
@@ -137,22 +139,8 @@ export function initializeEventListeners() {
 
       // 時刻表示をリセットして再描画
       document.querySelectorAll('.time-display').forEach(display => display.remove());
-      document.querySelectorAll('.log-label').forEach(label => {
-        const channelName = label.childNodes[0].nodeValue.trim();
-        const areaName = label.closest('.area-tile').querySelector('.area-title').textContent.replace('（時刻順）', '');
-        const key = `${areaName}_${channelName}`;
 
-        if (timeDisplays[key]) {
-          let timeDisplay = label.querySelector('.time-display');
-          if (!timeDisplay) {
-            timeDisplay = document.createElement('div');
-            timeDisplay.className = 'time-display';
-            label.appendChild(timeDisplay);
-          }
-          timeDisplay.innerHTML = `<i class="far fa-clock"></i>&nbsp;${timeDisplays[key].substring(0, 5)}`;
-        }
-      });
-
+      updateTimeDisplay();
       // ノートカードを更新
       updateNoteCard();
     } else {
@@ -160,6 +148,21 @@ export function initializeEventListeners() {
     }
   });
 
+  // シェアボタンの機能
+  shareButton.addEventListener('click', async () => {
+    const shareUrl = generateShareableUrl();  // storage.jsからURLを生成
+
+    try {
+      await navigator.share(
+        {
+          title: 'ネコシェア',
+          url: shareUrl
+        });
+    } catch (error) {
+      console.error(error);
+    }
+    showToast("シェアします");  // ui.jsのトースト表示
+  });
 
   confirmButton.addEventListener('click', () => {
     switchScreen('logScreen');
@@ -360,4 +363,11 @@ export function addLogAndTimeEntry(areaTitle, channelName, logTime, futureTime) 
   updateNoteCard();
 
 }
-
+document.getElementById('shareButton').addEventListener('click', () => {
+  const shareUrl = generateShareableUrl();  // ローカルストレージからURLを生成
+  navigator.clipboard.writeText(shareUrl).then(() => {
+    showToast("URLをクリップボードに保存しました");
+  }).catch(err => {
+    console.error('Failed to copy URL: ', err);
+  });
+});

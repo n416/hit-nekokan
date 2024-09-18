@@ -1,4 +1,5 @@
 // storage.js
+import { updateNoteCard, collectAndSortLogEntries } from './ui.js';
 
 export function loadLogs() {
   try {
@@ -26,7 +27,7 @@ export function loadTimeDisplays() {
     }
     return JSON.parse(timeDisplays);
   } catch (error) {
-    // console.error('Failed to load timeDisplays:', error);
+    console.error('Failed to load timeDisplays:', error);
     return {}; // エラーが発生した場合でも、空のオブジェクトを返す
   }
 }
@@ -63,4 +64,41 @@ export function saveChannelCount(areaName, channelCount) {
 export function loadChannelCount(areaName) {
   const channelSettings = JSON.parse(localStorage.getItem('channelSettings')) || {};
   return channelSettings[areaName] || 5;  // デフォルトは1チャンネル
+}
+export function generateShareableUrl() {
+  const logs = loadLogs();
+  const timeDisplays = loadTimeDisplays();
+  const data = { logs, timeDisplays };
+  
+  // LZStringで圧縮
+  const compressedData = LZString.compressToEncodedURIComponent(JSON.stringify(data));
+  const baseUrl = window.location.origin + window.location.pathname;
+  
+  // 圧縮したデータをURLに追加
+  return `${baseUrl}?data=${compressedData}`;
+}
+export function loadFromUrlParams() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const compressedData = urlParams.get('data');
+
+  if (compressedData) {
+    const decompressedData = LZString.decompressFromEncodedURIComponent(compressedData);
+    const data = JSON.parse(decompressedData);
+
+    if (data) {
+      saveLogs(data.logs);
+      saveTimeDisplays(data.timeDisplays);
+
+      // データ復元後にUIを更新
+      collectAndSortLogEntries();  // ログを整理
+      updateNoteCard();  // ノートカードを更新
+    }
+  }
+}
+
+// URLのクエリパラメータからdataを削除
+export function removeHistoryGetData(){
+    const url = new URL(window.location);
+    url.searchParams.delete('data');
+    history.replaceState(null, '', url);  // ブラウザ履歴を更新し、URLからdataパラメータを削除
 }
