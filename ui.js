@@ -45,10 +45,12 @@ export function updateNoteCard() {
   }
 }
 
+// 時刻ラベルを更新
 export function updateTimeDisplay() {
+  timeDisplays = loadTimeDisplays();
   document.querySelectorAll('.log-label').forEach(label => {
     const channelName = label.childNodes[0].nodeValue.trim();
-    const areaName = label.closest('.area-tile').querySelector('.area-title').textContent.replace('（時刻順）', '');
+    const areaName = label.closest('.area-tile').querySelector('.area-title').textContent;
     const key = `${areaName}_${channelName}`;
 
     // keyがtimeDisplaysに存在するか確認してから操作

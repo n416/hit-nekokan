@@ -139,9 +139,11 @@ export function initializeEventListeners() {
       // 時刻表示をリセットして再描画
       document.querySelectorAll('.time-display').forEach(display => display.remove());
 
+      // 時刻ラベルを更新
+      updateTimeDisplay();
+
       // ノートカードを更新
       updateNoteCard();
-      updateTimeDisplay();
     } else {
       showToast('戻る操作はできません');
     }
@@ -359,7 +361,7 @@ export function addLogAndTimeEntry(areaTitle, channelName, logTime, futureTime) 
   });
 
   // ノートカードを更新
-  updateNoteCard();
+  //updateNoteCard();
 
 }
 document.getElementById('shareButton').addEventListener('click', () => {
