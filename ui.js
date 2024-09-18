@@ -18,10 +18,8 @@ export function updateNoteCard() {
   let lastArea = null;
   const formattedEntries = [];
   const hideTime = document.getElementById('checkboxIcon').classList.contains('fa-square-check'); // チェックが入っているか確認
-console.log("orderedLogEntries",orderedLogEntries);
 
   orderedLogEntries.forEach((entry, index) => {
-    console.log(entry.area);
     if (lastArea !== entry.area) {
       if (formattedEntries.length > 0) {
         formattedEntries.push('<hr>');
