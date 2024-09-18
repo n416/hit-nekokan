@@ -46,8 +46,7 @@ export function updateNoteCard() {
 }
 
 export function updateTimeDisplay() {
-  const labels = document.querySelectorAll('.log-label');
-  labels.forEach(label => {
+  document.querySelectorAll('.log-label').forEach(label => {
     const channelName = label.childNodes[0].nodeValue.trim();
     const areaName = label.closest('.area-tile').querySelector('.area-title').textContent.replace('（時刻順）', '');
     const key = `${areaName}_${channelName}`;
@@ -61,6 +60,17 @@ export function updateTimeDisplay() {
         label.appendChild(timeDisplay);
       }
       timeDisplay.innerHTML = `<i class="far fa-clock"></i>&nbsp;${timeDisplays[key].substring(0, 5)}`;
+    }
+  });
+}
+
+export function updateAreaCount() {
+  document.querySelectorAll('.area-tile').forEach(areaTile => {
+    const areaTitleElement = areaTile.querySelector('.area-title');
+    if (areaTitleElement) {
+      const areaName = areaTitleElement.textContent.trim();
+      const channelCount = loadChannelCount(areaName);
+      adjustChannelDisplay(areaName, channelCount);
     }
   });
 }
@@ -195,7 +205,6 @@ function adjustChannelDisplay(areaName, channelCount) {
     console.error(`Area tile for ${areaName} not found`);
     return;
   }
-  console.log("channelCount", channelCount);
   // PVP行を除いたlog-rowの表示を設定 (入力値 + 1)
   for (let i = 1; i <= 10; i++) {
     // PVPが1行目にあるため、実際のチャンネルはnth-child(i + 2)から始まる

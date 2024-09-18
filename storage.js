@@ -1,5 +1,5 @@
 // storage.js
-import { updateNoteCard, collectAndSortLogEntries } from './ui.js';
+import { updateNoteCard, collectAndSortLogEntries, updateAreaCount } from './ui.js';
 
 export function loadLogs() {
   try {
@@ -65,10 +65,23 @@ export function loadChannelCount(areaName) {
   const channelSettings = JSON.parse(localStorage.getItem('channelSettings')) || {};
   return channelSettings[areaName] || 5;  // デフォルトは1チャンネル
 }
+
+// 全エリアのチャンネル数を保存する
+export function saveChannelCounts(channelCounts) {
+  localStorage.setItem('channelSettings', JSON.stringify(channelCounts));
+}
+
+// 全エリアのチャンネル数を取得する
+export function loadChannelCounts() {
+  const channelSettings = JSON.parse(localStorage.getItem('channelSettings')) || {};
+  return channelSettings;  // デフォルトは1チャンネル
+}
+
 export function generateShareableUrl() {
   const logs = loadLogs();
   const timeDisplays = loadTimeDisplays();
-  const data = { logs, timeDisplays };
+  const channelCounts = loadChannelCounts();
+  const data = { logs, timeDisplays, channelCounts };
   
   // LZStringで圧縮
   const compressedData = LZString.compressToEncodedURIComponent(JSON.stringify(data));
@@ -77,6 +90,7 @@ export function generateShareableUrl() {
   // 圧縮したデータをURLに追加
   return `${baseUrl}?data=${compressedData}`;
 }
+
 export function loadFromUrlParams() {
   const urlParams = new URLSearchParams(window.location.search);
   const compressedData = urlParams.get('data');
@@ -88,10 +102,11 @@ export function loadFromUrlParams() {
     if (data) {
       saveLogs(data.logs);
       saveTimeDisplays(data.timeDisplays);
-
+      saveChannelCounts(data.channelCounts);
       // データ復元後にUIを更新
       collectAndSortLogEntries();  // ログを整理
       updateNoteCard();  // ノートカードを更新
+      updateAreaCount();
     }
   }
 }

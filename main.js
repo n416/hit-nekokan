@@ -1,7 +1,7 @@
 import { showOverwriteModal } from './ui.js';
 import { loadFromUrlParams, loadLogs, removeHistoryGetData } from './storage.js';
 import { initializeEventListeners } from './events.js';
-import { updateNoteCard } from './ui.js';
+import { updateNoteCard, updateAreaCount} from './ui.js';
 
 document.addEventListener('DOMContentLoaded', () => {
   const existingData = loadLogs();  // ローカルストレージ内のデータを確認
@@ -14,16 +14,19 @@ document.addEventListener('DOMContentLoaded', () => {
       loadFromUrlParams();
       initializeEventListeners();
       updateNoteCard(); // ノートカードを更新
+      updateAreaCount();
     }, () => {
       // ユーザーがキャンセルを押した場合、通常の初期化
       initializeEventListeners();
       updateNoteCard();
+      updateAreaCount();
     });
   } else {
     // 上書き確認の必要がない場合は直接データをロード
     loadFromUrlParams();
     initializeEventListeners();
     updateNoteCard();
+    updateAreaCount();
     // URLのクエリパラメータからdataを削除
     removeHistoryGetData()
   }
