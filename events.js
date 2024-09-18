@@ -1,4 +1,4 @@
-import { updateNoteCard, showToast, collectAndSortLogEntries } from './ui.js';
+import { updateNoteCard, showToast, updateTimeDisplay, collectAndSortLogEntries } from './ui.js';
 import { saveLogs, loadLogs, saveTimeDisplays, loadTimeDisplays, generateShareableUrl, loadFromUrlParams } from './storage.js';
 import { initializeTimePicker } from './timePicker.js';
 // グローバルに actionHistory を定義
@@ -139,9 +139,9 @@ export function initializeEventListeners() {
       // 時刻表示をリセットして再描画
       document.querySelectorAll('.time-display').forEach(display => display.remove());
 
-      updateTimeDisplay();
       // ノートカードを更新
       updateNoteCard();
+      updateTimeDisplay();
     } else {
       showToast('戻る操作はできません');
     }
