@@ -62,8 +62,20 @@ export function saveChannelCount(areaName, channelCount) {
 
 // 各エリアごとのチャンネル数を取得する
 export function loadChannelCount(areaName) {
-  const channelSettings = JSON.parse(localStorage.getItem('channelSettings')) || {};
-  return channelSettings[areaName] || 5;  // デフォルトは1チャンネル
+  const channelCount = localStorage.getItem('channelCount');
+  
+  try {
+    if (channelCount) {
+      return JSON.parse(channelCount);
+    } else {
+      // channelCount がない場合のデフォルト値を設定
+      return 5; // 5チャンネルをデフォルト値とする
+    }
+  } catch (error) {
+    console.error("Invalid JSON for channelCount:", error);
+    // エラーが発生した場合もデフォルト値を返す
+    return 5;
+  }
 }
 
 // 全エリアのチャンネル数を保存する

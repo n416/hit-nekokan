@@ -337,8 +337,9 @@ function closeConfirmModal() {
 }
 
 function closeModal() {
-  const modal = document.getElementById('modal');
-  modal.style.display = 'none';
+  document.querySelectorAll('.modal').forEach((modal) => {
+    modal.style.display = 'none'; // 各モーダルを閉じる
+  });
 }
 
 // 共通のログ整形と追加処理
@@ -411,9 +412,6 @@ export function addLogAndTimeEntry(areaTitle, channelName, logTime, futureTime) 
       timeDisplay.innerHTML = `<i class="far fa-clock"></i>&nbsp;${futureTime.substring(0, 5)}`;
     }
   });
-
-  // ノートカードを更新
-  //updateNoteCard();
 
 }
 document.getElementById('shareButton').addEventListener('click', () => {
