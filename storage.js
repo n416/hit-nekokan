@@ -55,38 +55,89 @@ export function saveDisabledChannels(disabledChannels) {
 
 // 各エリアごとにチャンネル数を保存する
 export function saveChannelCount(areaName, channelCount) {
-  const channelSettings = JSON.parse(localStorage.getItem('channelSettings')) || {};
+  let channelSettings = {};
+  try {
+    const savedSettings = localStorage.getItem('channelSettings');
+
+    if (savedSettings) {
+      // savedSettingsがnullやundefinedでない場合のみJSON.parseを実行
+      channelSettings = JSON.parse(savedSettings);
+    } else {
+      // savedSettingsがnullまたはundefinedなら空のオブジェクトを使用
+      channelSettings = {};
+    }
+  } catch (error) {
+    console.error("Invalid JSON in localStorage for channelSettings:", error);
+    // エラー時は空のオブジェクトにリセット
+    channelSettings = {};
+  }
+
+  // チャンネル数を設定し、再度保存
   channelSettings[areaName] = channelCount;
   localStorage.setItem('channelSettings', JSON.stringify(channelSettings));
+
 }
 
 // 各エリアごとのチャンネル数を取得する
 export function loadChannelCount(areaName) {
-  const channelCount = localStorage.getItem('channelCount');
-  
+  let channelSettings = {};
+
   try {
-    if (channelCount) {
-      return JSON.parse(channelCount);
+    const savedSettings = localStorage.getItem('channelSettings');
+    
+    // 値が存在し、かつ空でないかチェック
+    if (savedSettings && savedSettings !== 'undefined') {
+      // 有効なJSONをパース
+      channelSettings = JSON.parse(savedSettings);
     } else {
-      // channelCount がない場合のデフォルト値を設定
-      return 5; // 5チャンネルをデフォルト値とする
+      // 保存されたデータが無効だった場合にデフォルト値を使用
+      channelSettings = {};
     }
   } catch (error) {
-    console.error("Invalid JSON for channelCount:", error);
-    // エラーが発生した場合もデフォルト値を返す
-    return 5;
+    console.error("Invalid JSON in localStorage for channelSettings:", error);
+    // エラー時は空のオブジェクトにリセット
+    channelSettings = {};
   }
+
+  // areaNameに対応するチャンネル数を返す。見つからない場合はデフォルトのチャンネル数を返す
+  return channelSettings[areaName] || 5; // 例としてデフォルト値10を返す
 }
 
 // 全エリアのチャンネル数を保存する
 export function saveChannelCounts(channelCounts) {
-  localStorage.setItem('channelSettings', JSON.stringify(channelCounts));
+  console.log(channelCounts);
+  if (channelCounts && channelCounts !== 'undefined') {
+    console.log("not undefined");
+    localStorage.setItem('channelSettings', JSON.stringify(channelCounts));
+  } else {
+    console.log("undefined");
+    localStorage.setItem('channelSettings', "");
+  }
 }
 
 // 全エリアのチャンネル数を取得する
 export function loadChannelCounts() {
-  const channelSettings = JSON.parse(localStorage.getItem('channelSettings')) || {};
-  return channelSettings;  // デフォルトは1チャンネル
+  let channelSettings = {};
+
+  try {
+    const savedSettings = localStorage.getItem('channelSettings');
+    
+    // 値が存在し、かつ空でないかチェック
+    if (savedSettings && savedSettings !== 'undefined') {
+      // 有効なJSONをパース
+      channelSettings = JSON.parse(savedSettings);
+    } else {
+      // 保存されたデータが無効だった場合にデフォルト値を使用
+      channelSettings = {};
+    }
+  } catch (error) {
+    console.error("Invalid JSON in localStorage for channelSettings:", error);
+    // エラー時は空のオブジェクトにリセット
+    channelSettings = {};
+  }
+
+  // areaNameに対応するチャンネル数を返す。見つからない場合はデフォルトのチャンネル数を返す
+  return channelSettings; 
 }
 
 export function generateShareableUrl() {
@@ -94,15 +145,16 @@ export function generateShareableUrl() {
   const timeDisplays = loadTimeDisplays();
   const channelCounts = loadChannelCounts();
   const data = { logs, timeDisplays, channelCounts };
-  
+
   // LZStringで圧縮
   const compressedData = LZString.compressToEncodedURIComponent(JSON.stringify(data));
   const baseUrl = window.location.origin + window.location.pathname;
-  
+
   // 圧縮したデータをURLに追加
   return `${baseUrl}?data=${compressedData}`;
 }
 
+// GETパラメータ読み込み
 export function loadFromUrlParams() {
   const urlParams = new URLSearchParams(window.location.search);
   const compressedData = urlParams.get('data');
@@ -124,8 +176,8 @@ export function loadFromUrlParams() {
 }
 
 // URLのクエリパラメータからdataを削除
-export function removeHistoryGetData(){
-    const url = new URL(window.location);
-    url.searchParams.delete('data');
-    history.replaceState(null, '', url);  // ブラウザ履歴を更新し、URLからdataパラメータを削除
+export function removeHistoryGetData() {
+  const url = new URL(window.location);
+  url.searchParams.delete('data');
+  history.replaceState(null, '', url);  // ブラウザ履歴を更新し、URLからdataパラメータを削除
 }
