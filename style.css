@@ -687,7 +687,8 @@ body {
     .copy-btn,
     #confirmYesButton,
     #timePickerOkButton,
-    #timePickerClearButton {
+    #timePickerClearButton,
+    #overwriteYesButton {
         margin-bottom: 10px;
     }
 }
