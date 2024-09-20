@@ -94,9 +94,6 @@ export function initializeEventListeners() {
     });
   });
 
-
-  let selectedChannelLabel = null;
-
   // ページロード時に保存された時刻表示を復元
   document.querySelectorAll('.log-label').forEach(label => {
     const channelName = label.childNodes[0].nodeValue.trim();

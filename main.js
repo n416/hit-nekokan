@@ -15,11 +15,15 @@ document.addEventListener('DOMContentLoaded', () => {
       initializeEventListeners();
       updateNoteCard(); // ノートカードを更新
       updateAreaCount();
+      // URLからGETパラメータを削除
+      removeHistoryGetData();
     }, () => {
       // ユーザーがキャンセルを押した場合、通常の初期化
       initializeEventListeners();
       updateNoteCard();
       updateAreaCount();
+      // URLからGETパラメータを削除
+      removeHistoryGetData();
     });
   } else {
     // 上書き確認の必要がない場合は直接データをロード
@@ -27,7 +31,8 @@ document.addEventListener('DOMContentLoaded', () => {
     initializeEventListeners();
     updateNoteCard();
     updateAreaCount();
-    // URLのクエリパラメータからdataを削除
-    removeHistoryGetData()
+    removeHistoryGetData();
   }
+  // URLからGETパラメータを削除
+  setInterval(updateNoteCard, 5000);
 });

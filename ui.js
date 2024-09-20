@@ -10,7 +10,7 @@ if (!timeDisplays) {
 }
 
 let orderedLogEntries = [];
-
+// ノートを更新
 export function updateNoteCard() {
   timeDisplays = loadTimeDisplays();
   collectAndSortLogEntries();
@@ -42,7 +42,10 @@ export function updateNoteCard() {
 
   const noteCard = document.getElementById('noteCard');
   if (formattedEntries.length > 0) {
-    noteCard.innerHTML = formattedEntries.join(' → ').replace(/ → <hr>/g, '<hr>').replace(/<hr> → /g, '<hr>');
+    const noteCardHtml = formattedEntries.join(' → ').replace(/ → <hr>/g, '<hr>').replace(/<hr> → /g, '<hr>');
+    if (noteCard.innerHTML != noteCardHtml) {
+      noteCard.innerHTML = noteCardHtml;
+    }
     noteCard.classList.add('active');
   } else {
     noteCard.innerHTML = '';
@@ -256,26 +259,18 @@ export function showOverwriteModal(onConfirm, onCancel) {
   // OKボタンを押したときの処理
   document.getElementById('overwriteYesButton').addEventListener('click', () => {
     onConfirm();
-
-    // URLからGETパラメータを削除
-    removeHistoryGetData();
-
     overwriteModal.style.display = 'none';
   });
 
   // キャンセルボタンを押したときの処理
   document.getElementById('overwriteNoButton').addEventListener('click', () => {
     onCancel();
-    // URLからGETパラメータを削除
-    removeHistoryGetData();
     overwriteModal.style.display = 'none';
   });
 
   // 閉じるボタンを押したときの処理（キャンセルと同様）
   document.getElementById('overwriteModalCloseButton').addEventListener('click', () => {
     onCancel();
-    // URLからGETパラメータを削除
-    removeHistoryGetData();
     overwriteModal.style.display = 'none';
   });
 
@@ -283,8 +278,6 @@ export function showOverwriteModal(onConfirm, onCancel) {
   overwriteModal.addEventListener('click', (event) => {
     if (event.target === overwriteModal) {
       onCancel();
-      // URLからGETパラメータを削除
-      removeHistoryGetData();
       overwriteModal.style.display = 'none';
     }
   });
